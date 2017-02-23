@@ -4,19 +4,29 @@ using UnityEngine;
 
 [RequireComponent(typeof(Controller))]
 public abstract class Entity : MonoBehaviour {
-    float gravity = Constants.Physics.GRAVITY;
-    float moveSpeed = Constants.Physics.ENTITY_RUN_SPEED;
-    Vector3 velocity;
+    // total height of the entity's jump
+    public float jumpHeight = 4;
+    // time it takes to reach apex of jump
+    public float jumpTimeApex = .4f;
+    // speed of horizontal running
+    public float moveSpeed = 6;
+    // player can't control jumps easily
+    public float midairAccel = 0.2f;
+    protected float midairVelocitySmoothing;
+
+    protected float gravity;
+    protected float jumpVelocity;
+    protected Vector3 velocity;
     protected Controller controller;
 
     void Start() {
         controller = GetComponent<Controller>();
-    }
-    void Update() {
-        Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        velocity.x = input.x * moveSpeed;
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        // derived from deltaV = Vinitial * t + (acceleration * time^2)/2
+        gravity = -(2 * jumpHeight) / Mathf.Pow(jumpTimeApex, 2);
+        // derived from Vfinal = Vinitial + accel * time
+        jumpVelocity = Mathf.Abs(gravity) * jumpTimeApex;
     }
+
+    // void Update(){} movement properties are defined in child classes
 }
