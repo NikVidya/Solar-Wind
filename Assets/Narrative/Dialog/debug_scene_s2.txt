@@ -1,0 +1,10 @@
+/*
+--~~======================================~~--
+--~~==     DEBUG SCENE - Sequence 2     ==~~--
+--~~======================================~~--
+*/
+speakLine(1, "Fine, fine");
+delay(200);
+speakLine(0, "Say, do you hear that alarm?");
+speakLine(1, "Yea. What do you suppose it's for");
+shake(200);
