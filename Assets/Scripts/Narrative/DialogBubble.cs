@@ -12,7 +12,8 @@ public abstract class DialogBubble : MonoBehaviour {
 	// Obtained during initialization
 	private float lifespan;
 	private GameObject actor;
-	private NarrativeUtils.UtilDoneCallback callback;
+	private bool hasFinished = false;
+	private bool hasBeenShown = false;
 
 	// Obtained on Awake
 	private CanvasGroup speechGroup;
@@ -37,11 +38,9 @@ public abstract class DialogBubble : MonoBehaviour {
 	}
 	protected abstract void OnAwake ();
 
-
-	public virtual void Initialize(GameObject actor, float lifespan, NarrativeUtils.UtilDoneCallback callback){
+	public virtual void Initialize(GameObject actor, float lifespan){
 		this.actor = actor;
 		this.lifespan = lifespan;
-		this.callback = callback;
 
 		transform.parent.position = new Vector3 (actor.transform.position.x, actor.transform.position.y + actorHeightOffset, actor.transform.position.z);
 		bubbleAnimator.SetTrigger ("bubble_in");
@@ -49,12 +48,15 @@ public abstract class DialogBubble : MonoBehaviour {
 
 	public void HandleBubbleInFinished(){
 		inTime = Time.time;
+		hasBeenShown = true;
 	}
 
 	public void HandleBubbleOutFinished(){
+		OnBubbleFinished ();
 		Destroy (transform.parent.gameObject); // kill the parent, and therefore kill the self
-		callback();
 	}
+	protected abstract void OnBubbleFinished();
+
 
 	public void DismissBubble(){
 		bubbleAnimator.SetTrigger ("bubble_out");
@@ -66,7 +68,8 @@ public abstract class DialogBubble : MonoBehaviour {
 		OnUpdate ();
 	}
 	protected virtual void OnUpdate(){
-		if ( lifespan > 0 && Time.time - inTime < lifespan) { // Only consider bubbling out from lifespan if there was a valid lifespan
+		if ( hasBeenShown && lifespan > 0 && Time.time - inTime > lifespan && !hasFinished) { // Only consider bubbling out from lifespan if there was a valid lifespan
+			hasFinished = true;
 			bubbleAnimator.SetTrigger ("bubble_out");
 		}
 	}

@@ -19,14 +19,12 @@ public class NarrativeUtils : MonoBehaviour {
 	}
 
 
-	public delegate void UtilDoneCallback ();
 	/**
 	 * SpeakLine
 	 * Causes a speech bubble containing the specified line to appear above the specified actor.
 	 * Will also move other speech bubbles off the screen
 	 */
-	//private IEnumerator bubbleCoroutine;
-	public void SpeakLine(GameObject actor, string line, int wordTime, UtilDoneCallback callback){
+	public void SpeakLine(GameObject actor, string line, int wordTime, Sequence sequence){
 		//float speakTime = wordTime * line.Split (new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries).Length;
 
 		// Meat of this one is done within the bubble script. 
@@ -34,35 +32,29 @@ public class NarrativeUtils : MonoBehaviour {
 		GameObject bubble = Instantiate (Resources.Load (Constants.Resources.Narrative.PREFAB_SPEECH_BUBBLE_PATH, typeof(GameObject)), sceneCanvas.gameObject.transform) as GameObject; // Parent the speech bubble to the scene canvas
 		SpeechBubble bubbleScript = bubble.GetComponentInChildren<SpeechBubble> (true);
 		if (bubbleScript == null) {
-			Debug.LogError ("Created a speech bubble without a script. What?! Terminating stage and moving to next.");
+			Debug.LogError ("Created a speech bubble without a script. What?! Terminating direction and moving to next.");
 			DestroyImmediate (bubble);
-			callback ();
+			sequence.Next ();
 			return;
 		}
 		// Initialize the speech bubble
-		bubbleScript.Initialize(actor, line, wordTime, callback);
-
-		// Delay the return of the coroutine for sequence timing
-		/*bubbleCoroutine = HandleSceneText (line, speakTime, callback);
-		StartCoroutine (bubbleCoroutine);*/
+		bubbleScript.Initialize(actor, line, wordTime, ()=>{
+			sequence.Next();
+		});
 	}
-	/*private IEnumerator HandleSceneText(string line, float waitTime, UtilDoneCallback callback){
-		yield return new WaitForSeconds (waitTime / 1000);
-		//Debug.LogFormat ("Actor spoke line: {0}, for {1}ms", line, waitTime);
-		// Done with this direction
-		callback ();
-	}*/
 
-	public void PoseDialogOptions(GameObject actor, Sequence.SequenceChoice[] decisions, UtilDoneCallback callback){
+	public void PoseDialogOptions(GameObject actor, Sequence.SequenceChoice[] decisions, Sequence sequence){
 		GameObject bubble = Instantiate (Resources.Load (Constants.Resources.Narrative.PREFAB_DECISION_BUBBLE_PATH, typeof(GameObject)), sceneCanvas.gameObject.transform) as GameObject;
 		DecisionBubble bubbleScript = bubble.GetComponentInChildren<DecisionBubble> (true);
 		if (bubbleScript == null) {
-			Debug.LogError ("Created a speech bubble without a script. What?! Terminating stage and moving to next.");
+			Debug.LogError ("Created a speech bubble without a script. What?! Terminating direction and moving to next.");
 			DestroyImmediate (bubble);
-			callback ();
+			sequence.Next ();
 			return;
 		}
 
-		bubbleScript.Initialize (actor, decisions, callback);
+		bubbleScript.Initialize (actor, decisions, (Sequence.SequenceChoice choice) => {
+			sequence.MakeDecision(choice);
+		});
 	}
 }

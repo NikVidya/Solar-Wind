@@ -5,7 +5,11 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class Sequence : MonoBehaviour {
-	
+
+	[Header("Sequence Defaults")]
+	[Tooltip("Default number of milliseconds to give to each word in the dialog")]
+	public int defaultWordTime = 400;
+
 	[Header("Sequence Data")]
 	[Tooltip("The stage direction for this sequence")]
 	public TextAsset sequenceFile; // The sequence to play
@@ -20,8 +24,9 @@ public class Sequence : MonoBehaviour {
 	}
 
 	// List of choices to present to the user at the end of the sequence
-	[Tooltip("If no choices are provided, the sequence will just end the scene")]
 	public SequenceChoice[] dialogOptions; // The choices the player can make
+	[Tooltip("If there are no choices, this 'choice' will be made. If the next sequence is null, the scene will end.")]
+	public SequenceChoice defaultAction; // The default actions that will happen if there are no choices
 
 	// Storage for the parsed sequence file
 	private class StageDirection
@@ -31,7 +36,7 @@ public class Sequence : MonoBehaviour {
 	}
 	private List<StageDirection> directions = new List<StageDirection> (); // List of stage directions in the file
 	private int curDirectionIndex = 0;
-
+	private bool sequenceOver = false;
 
 	private Scene parentScene;
 
@@ -73,7 +78,6 @@ public class Sequence : MonoBehaviour {
 
 	protected void PlayDirection(){
 		StageDirection dir = directions [curDirectionIndex];
-		NarrativeUtils.UtilDoneCallback callback = new NarrativeUtils.UtilDoneCallback (this.NextDirection);
 		// Figure out what to do as the stage direction
 		switch (dir.func) {
 		case "speakLine":
@@ -85,30 +89,62 @@ public class Sequence : MonoBehaviour {
 			GameObject actor = parentScene.actors [actorIndex];
 			int wordTime;
 			if ( dir.data.Count < 3 || !int.TryParse (dir.data [2], out wordTime)) {
-				wordTime = 400; // Default to 400 ms
+				wordTime = defaultWordTime; // Default to 400 ms
 			}
-			parentScene.lib.SpeakLine (actor, dir.data [1], wordTime, callback);
+			parentScene.lib.SpeakLine (actor, dir.data [1], wordTime, this);
 			return;
 
 		default:
 			Debug.LogWarning (string.Format ("Sequence attempted to call unknown direction: {0}", dir.func));
-			NextDirection ();
+			Next ();
 			return;
 		}
 	}
 
-	protected void NextDirection(){
+	public void MakeDecision(SequenceChoice choice){
+		if (choice == null) {
+			Debug.LogWarning ("Sequence ended with null decision, Ending scene");
+			sequenceOver = true; // This sequence should no longer be playing
+			parentScene.EndScene (); // No choice made, can't continue so end the scene
+		}
+
+		choice.eventsForChoice.Invoke (); // Invoke any handlers for this choice
+
+		if (choice.nextSequence != null) {
+			sequenceOver = true; // This sequence should no longer be playing
+			choice.nextSequence.Play (); // Start up the next sequence
+		} else {
+			defaultAction.eventsForChoice.Invoke (); // Invoke any default events
+			if (defaultAction.nextSequence != null) {
+				sequenceOver = true;
+				defaultAction.nextSequence.Play ();
+			} else {
+				sequenceOver = true;
+				parentScene.EndScene ();
+			}
+		}
+	}
+
+	public void Next(){
+		if (sequenceOver) {
+			Debug.LogWarning ("Attempted to move to the next direction on a terminated sequence");
+			return; // Don't continue to the next direction if this sequence was marked as complete
+		}
 		if (curDirectionIndex < directions.Count - 1) { // There is another direction
 			curDirectionIndex++;
 			PlayDirection ();
 		} else {
 			if (dialogOptions.Length > 0) {
-				NarrativeUtils.UtilDoneCallback callback = new NarrativeUtils.UtilDoneCallback ( () => {
-					Debug.Log("Made a choice");
-				});
-				parentScene.lib.PoseDialogOptions (parentScene.actors [0], dialogOptions, callback);
+				parentScene.lib.PoseDialogOptions (parentScene.actors [0], dialogOptions, this);
 			} else {
-				parentScene.EndScene ();
+				defaultAction.eventsForChoice.Invoke (); // Invoke any default events
+				if (defaultAction.nextSequence != null) {
+					sequenceOver = true;
+					defaultAction.nextSequence.Play ();
+				} else {
+					sequenceOver = true;
+					parentScene.EndScene ();
+				}
 			}
 		}
 	}

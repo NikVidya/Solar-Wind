@@ -48,9 +48,6 @@ public class Scene : MonoBehaviour {
 			Debug.LogError ("Error: Scene could not obtain it's utils");
 			return;
 		}
-
-		// Debug
-		StartScene();
 	}
 
 	public void StartScene(){
