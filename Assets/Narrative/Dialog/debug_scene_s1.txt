@@ -8,24 +8,24 @@ The syntax for directions is similar to that of code, so it should be familiar.
 
 	--~~== SUPPORTED STAGE DIRECTIONS ==~~--
 
-moveToSpike( actor_index, spike_index, movement_time )
+moveToSpike( int actor_index, int spike_index, int movement_time )
 - Moves the actor at actor_index to the spike at spike_index over movement_time ms
 - NOTE: If I we can get the actors to move like NPCs in the cutscenes then I can remove movement_time
 
-speakLine( actor_index, dialog )
-- Makes the actor at actor_index speak dialog
+speakLine( int actor_index, string dialog, int word_time )
+- Makes the actor at actor_index speak dialog. Speaking time will last word_time * number of words in dialog ms
 - Each call to speakLine will produce a new speech bubble. If dialog contains multiple lines, they will all be contained in a single bubble
 
-delay( delay )
+delay( int delay )
 - Will do nothing for delay milliseconds
 
-shake( shake_time )
+shake( int shake_time )
 - Will shake the screen for shake_time milliseconds
 
-camToSpike( spike_index, movement_time )
+camToSpike( int spike_index, int movement_time )
 - Moves the scene camera to the spike at spike_index over movement_time ms
 
-camZoom( orthographic_scale, zoom_time )
+camZoom( float orthographic_scale, int zoom_time )
 - Changes the orthographic_scale of the camera (it's zoom) over zoom_time ms
 
 
@@ -35,5 +35,5 @@ camZoom( orthographic_scale, zoom_time )
 */
 moveToSpike(0, 0, 0);
 moveToSpike(1, 1, 0);
-speakLine(0, "Hi");
+speakLine(0, "Hi", 900);
 speakLine(1, "Hi, how are you?");

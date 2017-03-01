@@ -7,9 +7,6 @@ using UnityEngine.Events;
 public class Sequence : MonoBehaviour {
 	
 	[Header("Sequence Data")]
-	[Tooltip("Scene this sequence is a part of")]
-	public Scene scene; // Scene this sequence belongs to
-	public NarrativeUtils utils; // The narrative utility script to use for the sequence
 	[Tooltip("The stage direction for this sequence")]
 	public TextAsset sequenceFile; // The sequence to play
 
@@ -34,6 +31,9 @@ public class Sequence : MonoBehaviour {
 	}
 	private List<StageDirection> directions = new List<StageDirection> (); // List of stage directions in the file
 	private int curDirectionIndex = 0;
+
+
+	private Scene parentScene;
 
 	void Awake(){
 		// Begin parsing the sequence file
@@ -60,6 +60,11 @@ public class Sequence : MonoBehaviour {
 			}
 			directions.Add (dir);
 		}
+		// Get a reference to the scene
+		parentScene = GetComponentInParent<Scene>();
+		if (parentScene == null) {
+			Debug.LogError ("Sequence could not obtain parent scene");
+		}
 	}
 
 	public void Play(){
@@ -68,17 +73,21 @@ public class Sequence : MonoBehaviour {
 
 	protected void PlayDirection(){
 		StageDirection dir = directions [curDirectionIndex];
-
+		NarrativeUtils.UtilDoneCallback callback = new NarrativeUtils.UtilDoneCallback (this.NextDirection);
 		// Figure out what to do as the stage direction
 		switch (dir.func) {
 		case "speakLine":
 			int actorIndex = int.Parse (dir.data [0]);
-			if (actorIndex > scene.actors.Length) {
+			if (actorIndex > parentScene.actors.Length) {
 				Debug.LogWarningFormat ("Attempted to give actor index {0} a direction, but that actor index is not in the scene!", actorIndex);
 				return;
 			}
-			GameObject actor = scene.actors [actorIndex];
-			utils.SpeakLine (actor, dir.data [1], new NarrativeUtils.UtilDoneCallback (NextDirection));
+			GameObject actor = parentScene.actors [actorIndex];
+			int wordTime;
+			if ( dir.data.Count < 3 || !int.TryParse (dir.data [2], out wordTime)) {
+				wordTime = 400; // Default to 400 ms
+			}
+			parentScene.lib.SpeakLine (actor, dir.data [1], wordTime, callback);
 			return;
 
 		default:
@@ -94,10 +103,12 @@ public class Sequence : MonoBehaviour {
 			PlayDirection ();
 		} else {
 			if (dialogOptions.Length > 0) {
-				Debug.Log ("Show choice dialog");
-				scene.EndScene ();
+				NarrativeUtils.UtilDoneCallback callback = new NarrativeUtils.UtilDoneCallback ( () => {
+					Debug.Log("Made a choice");
+				});
+				parentScene.lib.PoseDialogOptions (parentScene.actors [0], dialogOptions, callback);
 			} else {
-				scene.EndScene ();
+				parentScene.EndScene ();
 			}
 		}
 	}
