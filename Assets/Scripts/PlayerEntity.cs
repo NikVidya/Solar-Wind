@@ -17,6 +17,9 @@ public class PlayerEntity : Entity {
         }
         // if player is off the ground, direction control isn't as easy
         if (!controller.collisions.below) {
+            if (controller.collisions.left || controller.collisions.right) {
+                velocity.x = 0;
+            }
             velocity.x = Mathf.SmoothDamp(velocity.x, input.x * moveSpeed, ref midairVelocitySmoothing, midairAccel);
         } else {
             velocity.x = input.x * moveSpeed;
