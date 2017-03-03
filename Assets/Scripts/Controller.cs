@@ -7,7 +7,7 @@ public class Controller : MonoBehaviour {
 
     public LayerMask collisionMask;
 
-    static float skinWidth = .15f;
+    static float skinWidth = .015f;
     public int horizontalRayCount = 4;
     public int verticalRayCount = 4;
 
