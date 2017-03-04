@@ -163,18 +163,7 @@ public class Controller : RaycastController {
             }
         }
     }
-
-    // Update the points at which the rays are drawn
-    void UpdateRaycastOrigins() {
-        Bounds bounds = collider.bounds;
-        bounds.Expand(skinWidth * -2);
-
-        // Origins are set to the corners of the bounding box
-        raycastOrigins.topLeft = new Vector3(bounds.min.x, bounds.max.y);
-        raycastOrigins.topRight = new Vector3(bounds.max.x, bounds.max.y);
-        raycastOrigins.bottomLeft = new Vector3(bounds.min.x, bounds.min.y);
-        raycastOrigins.bottomRight = new Vector3(bounds.max.x, bounds.min.y);
-    }
+    
     
     public struct CollisionInfo {
         public bool above, below;
