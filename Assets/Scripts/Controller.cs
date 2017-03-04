@@ -2,28 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent (typeof (BoxCollider2D))]
-public class Controller : MonoBehaviour {
+public class Controller : RaycastController {
 
-    public LayerMask collisionMask;
-
-    static float skinWidth = .015f;
-    public int horizontalRayCount = 4;
-    public int verticalRayCount = 4;
-
-    private float horizontalRaySpacing, verticalRaySpacing;
-
-    private BoxCollider2D collider;
-    private RaycastOrigins raycastOrigins;
     public CollisionInfo collisions;
 
     public float maxClimbAngle = 80f;
     public float maxDescendAngle = 80f;
-
-	void Start () {
-        collider = GetComponent<BoxCollider2D>();
-        CalculateRaySpacing();
-    }
 
     public void Move(Vector3 velocity) {
         UpdateRaycastOrigins();
@@ -54,7 +38,7 @@ public class Controller : MonoBehaviour {
             // ray is drawn by horizontal spacing
             rayOrigin += Vector3.up * (horizontalRaySpacing * i);
             // ray is cast from ray origin, in direction * directionX (+ or -), for length rayLength, looking for the collisionmask
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector3.right * directionX, rayLength, collisionMask);
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
             Debug.DrawRay(rayOrigin, Vector3.right * directionX * rayLength, Color.red);
 
             // hits whichever collider is closest and stops there (prevents clipping)
@@ -106,7 +90,8 @@ public class Controller : MonoBehaviour {
             // ray is drawn by vertical spacing
             rayOrigin += Vector3.right * (verticalRaySpacing * i + velocity.x);
             // ray is cast from ray origin, in direction * directionY (+ or -), for length rayLength, stops at collisionMask
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector3.up * directionY, rayLength, collisionMask);
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, collisionMask);
+
             Debug.DrawRay(rayOrigin, Vector3.up * directionY * rayLength, Color.red);
 
             // hits whichever collider is closest and stops there (prevents clipping)
@@ -191,22 +176,6 @@ public class Controller : MonoBehaviour {
         raycastOrigins.bottomRight = new Vector3(bounds.max.x, bounds.min.y);
     }
     
-    // Calculate and update the spacing between the rays
-    void CalculateRaySpacing() {
-        Bounds bounds = collider.bounds;
-        bounds.Expand(skinWidth * -2);
-
-        // Minumum number of rays is set to 2
-        horizontalRayCount = Mathf.Clamp(horizontalRayCount, 2, int.MaxValue);
-        verticalRayCount = Mathf.Clamp(verticalRayCount, 2, int.MaxValue);
-        // Spacing divided among number of rays. If the ray count is 2, then the space is the width or height of the whole box
-        horizontalRaySpacing = bounds.size.y / (horizontalRayCount - 1);
-        verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);
-    }
-    private struct RaycastOrigins {
-        public Vector3 topLeft, topRight;
-        public Vector3 bottomLeft, bottomRight;
-    }
     public struct CollisionInfo {
         public bool above, below;
         public bool left, right;
