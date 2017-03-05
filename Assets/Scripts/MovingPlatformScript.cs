@@ -6,9 +6,13 @@ public class MovingPlatformScript : RaycastController {
 
     public Vector3 move;
     public LayerMask passengerMask;
+	float xOrigin, yOrigin;
+
 
     public override void Start() {
         base.Start();
+		xOrigin = transform.position.x;
+		yOrigin = transform.position.y;
     }
 
     void Update() {
@@ -18,6 +22,7 @@ public class MovingPlatformScript : RaycastController {
 
         MovePassengers(velocity);
         transform.Translate(velocity);
+		checkReverse(velocity);
     }
 
     void MovePassengers(Vector3 velocity) {
@@ -102,4 +107,31 @@ public class MovingPlatformScript : RaycastController {
         }
 
     }
+
+	void checkReverse(Vector3 velocity){
+
+		if (velocity.y != 0) {
+			float distanceLimitY = 4.0f;
+			if (transform.position.y > yOrigin + distanceLimitY) {
+				move = -move;
+			}
+			else if (transform.position.y < yOrigin - distanceLimitY) {
+				move = -move;
+			}
+		}
+
+		if (velocity.x != 0) {
+			float distanceLimitX = 4.0f;
+			if (transform.position.x > xOrigin + distanceLimitX) {
+				move = -move;
+			}
+			else if (transform.position.x < xOrigin - distanceLimitX) {
+				move = -move;
+			}
+		}
+
+	
+	}
+
+				
 }
