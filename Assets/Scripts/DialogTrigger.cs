@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DetectRaycasts : RaycastController {
+public class DialogTrigger : RaycastController {
 
-    public LayerMask other;
-
+    Scene scene;
     public override void Start() {
         base.Start();
     }
@@ -16,7 +15,7 @@ public class DetectRaycasts : RaycastController {
         VerticalCollisions();
     }
     void HorizontalCollisions() {
-        float rayLength = 10 + skinWidth;
+        float rayLength = skinWidth;
 
         // draw rays on left side
         for (int i = 0; i < horizontalRayCount; i++) {
@@ -27,12 +26,13 @@ public class DetectRaycasts : RaycastController {
             rayOrigin += Vector3.up * (horizontalRaySpacing * i);
 
             // ray is cast from ray origin, in direction * directionX (+ or -), for length rayLength, looking for the collisionmask
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right, rayLength, collisionMask);
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.left, rayLength, collisionMask);
 
-            Debug.DrawRay(rayOrigin, Vector3.right * rayLength, Color.red);
+            Debug.DrawRay(rayOrigin, Vector3.left * rayLength, Color.red);
 
             // hits whichever collider is closest and stops there (prevents clipping)
             if (hit) {
+                OnHit();
             }
         }
         // draw rays on right side
@@ -56,7 +56,7 @@ public class DetectRaycasts : RaycastController {
 
     // Detects collisions above and below the entity
     void VerticalCollisions() {
-        float rayLength = 10 + skinWidth;
+        float rayLength = skinWidth;
 
         // draw rays on top side
         for (int i = 0; i < verticalRayCount; i++) {
@@ -73,5 +73,24 @@ public class DetectRaycasts : RaycastController {
 
             }
         }
+        // draw rays on bottom side
+        for (int i = 0; i < verticalRayCount; i++) {
+            Vector3 rayOrigin = raycastOrigins.bottomLeft;
+            // ray is drawn by vertical spacing
+            rayOrigin += Vector3.right * (verticalRaySpacing * i);
+            // ray is cast from ray origin, in direction * directionY (+ or -), for length rayLength, stops at collisionMask
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, rayLength, collisionMask);
+
+            Debug.DrawRay(rayOrigin, Vector3.down * rayLength, Color.red);
+
+            // hits whichever collider is closest and stops there (prevents clipping)
+            if (hit) {
+
+            }
+        }
     }
+    void OnHit() {
+        scene.StartScene();
+    }
+    
 }
