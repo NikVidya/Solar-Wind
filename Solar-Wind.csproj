@@ -79,7 +79,10 @@
     <Compile Include="Assets\Scripts\Controller.cs" />
     <Compile Include="Assets\Scripts\DoorScript.cs" />
     <Compile Include="Assets\Scripts\Entity.cs" />
+<<<<<<< HEAD
     <Compile Include="Assets\Scripts\MovingPlatformScript.cs" />
+=======
+>>>>>>> master
     <Compile Include="Assets\Scripts\Narrative\DecisionBubble.cs" />
     <Compile Include="Assets\Scripts\Narrative\DialogBubble.cs" />
     <Compile Include="Assets\Scripts\Narrative\NarrativeUtils.cs" />
@@ -89,7 +92,10 @@
     <Compile Include="Assets\Scripts\Narrative\SpeechBubble.cs" />
     <Compile Include="Assets\Scripts\Narrative\SpeechBubbleBehaviour.cs" />
     <Compile Include="Assets\Scripts\PlayerEntity.cs" />
+<<<<<<< HEAD
     <Compile Include="Assets\Scripts\RaycastController.cs" />
+=======
+>>>>>>> master
     <Compile Include="Assets\Scripts\SceneTriggerScript.cs" />
   </ItemGroup>
   <ItemGroup>
