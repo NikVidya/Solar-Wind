@@ -7,13 +7,13 @@ public class PathablePlatform : MonoBehaviour {
 
 	[Header("Pathing parameters")]
 	[Tooltip("How high can the agent jump. Do they got mad ups?")]
-	public float agentJumpHeight = 2f;
+	public float agentJumpHeight = 3f;
 	[Tooltip("How far forward can the agent jump from the ground")]
-	public float agentJumpDistance = 2f;
+	public float agentJumpDistance = 4f;
 	[Tooltip("How far the agent can move laterally for each unit it falls")]
 	public float agentFloatDistance = 0.5f;
 	[Tooltip("How far can the agent drop before it shouldn't be considered a valid move")]
-	public float agentDropHeight = 4f;
+	public float agentDropHeight = 10f;
 	[Tooltip("Number of world units per pathfinding grid unit")]
 	public float gridUnit = 0.5f;
 	[Tooltip("How big is the agent traversing this platform")]
