@@ -24,7 +24,7 @@ public class GenericCollider : RaycastController {
     }
 
     void HorizontalCollisions() {
-        float rayLength = 0.02f + skinWidth;
+        float rayLength = 0.03f + skinWidth;
 
         // draw rays on left side
         for (int i = 0; i < horizontalRayCount; i++) {
@@ -66,7 +66,7 @@ public class GenericCollider : RaycastController {
 
     // Detects collisions above and below the entity
     void VerticalCollisions() {
-        float rayLength = 0.02f + skinWidth;
+        float rayLength = 0.03f + skinWidth;
 
         // draw rays on top side
         for (int i = 0; i < verticalRayCount; i++) {
