@@ -1,0 +1,9 @@
+/*
+--~~======================================~~--
+--~~==     DEBUG SCENE - Sequence 4     ==~~--
+--~~======================================~~--
+*/
+moveToSpike(0, 2, 300);
+moveToSpike(1, 3, 300);
+speakLine(1, "Whoa, we better go check it out");
+speakLine(0, "Yea, let's get going");

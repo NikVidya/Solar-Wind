@@ -1,7 +1,0 @@
-/*
---~~======================================~~--
---~~==     DEBUG SCENE - Sequence 3     ==~~--
---~~======================================~~--
-*/
-speakLine(1, "Well, allright. Wanna go to the bridge?");
-speakLine(0, "Sure");

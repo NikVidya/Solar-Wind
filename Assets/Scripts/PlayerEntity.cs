@@ -36,8 +36,8 @@ public class PlayerEntity : Entity {
                 dashCommandTimer = dashCommandTimerStart;
             }
         }
-        // jump with space (can't jump unless on ground)
-        if (Input.GetKeyDown(KeyCode.Space) && controller.collisions.below) {
+        // jump with space or W (can't jump unless on ground)
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && controller.collisions.below) {
             velocity.y = jumpVelocity;
         }
         // if player is off the ground, direction control isn't as easy
