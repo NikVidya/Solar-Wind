@@ -8,7 +8,6 @@ using UnityEngine;
  * add stuff to OnHit() to make it do stuff...on...hit...
  */
 public class GenericCollider : RaycastController {
-    private bool hitOnce = false;
 
     public override void Start() {
         base.Start();
@@ -20,15 +19,12 @@ public class GenericCollider : RaycastController {
         VerticalCollisions();
     }
 
-    public void OnHit() {
-        if (!hitOnce) {
-            Debug.Log("Hit!");
-            hitOnce = true;
-        }
+    public virtual void OnHit() {
+        // child classes do what they want with this
     }
 
     void HorizontalCollisions() {
-        float rayLength = skinWidth;
+        float rayLength = 0.02f + skinWidth;
 
         // draw rays on left side
         for (int i = 0; i < horizontalRayCount; i++) {
@@ -70,7 +66,7 @@ public class GenericCollider : RaycastController {
 
     // Detects collisions above and below the entity
     void VerticalCollisions() {
-        float rayLength = skinWidth;
+        float rayLength = 0.02f + skinWidth;
 
         // draw rays on top side
         for (int i = 0; i < verticalRayCount; i++) {

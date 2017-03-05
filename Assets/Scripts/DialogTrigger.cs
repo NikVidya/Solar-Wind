@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class DialogTrigger : GenericCollider {
     public Scene scene;
-    void Start() {
-        scene.StartScene();
-    }
-	void OnHit() {
-        base.OnHit();
-        scene.StartScene();
+    private bool hitOnce = false;
+
+    public override void OnHit() {
+        if (hitOnce == false) {
+            Debug.Log("Hit, should start scene");
+            scene.StartScene();
+            hitOnce = true;
+        }
     }
 }

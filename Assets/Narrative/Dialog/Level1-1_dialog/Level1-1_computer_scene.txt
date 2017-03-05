@@ -12,10 +12,13 @@
 	input from the Captain's terminal on the
 	bridge. The clock's ticking.
 */
-moveToSpike(0, 0, 100);
+moveToSpike(0, 0, 0);
 delay(200);
 speakLine(1, "Welcome, guest user");
+speakLine(0, "... Status?");
+speakLine(1, "The ship has experienced critical damage...");
+speakLine(1, "Self-destruct sequence has been initiated.");
+speakLine(1, "The Captain's terminal on the bridge has a self-destruct override.");
+speakLine(1, "Activating it can stop the self-destruct sequence.");
 delay(200);
-speakLine(0, "... Status...");
-delay(200);
-speakLine(1, "The ship has experienced severe damage, and a self-destruct sequence has been initiated. Crew may evacuate via escape pod in order to avoid death.");
+speakLine(0, "... To the bridge then.");

@@ -6,7 +6,10 @@ using UnityEngine.SceneManagement;
 public class RoomSwitch : GenericCollider {
 	public string roomName;
 
-    void OnHit() {
+    new void Start() {
+        
+    }
+    new void OnHit() {
         SceneManager.LoadScene(roomName);
     }
 
