@@ -12,7 +12,7 @@
 	input from the Captain's terminal on the
 	bridge. The clock's ticking.
 */
-moveToSpike(0, 0, 500);
+moveToSpike(0, 0, 100);
 delay(200);
 speakLine(1, "Welcome, guest user");
 delay(200);

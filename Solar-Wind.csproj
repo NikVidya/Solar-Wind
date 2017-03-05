@@ -82,6 +82,7 @@
     <Compile Include="Assets\Scripts\DialogTrigger.cs" />
     <Compile Include="Assets\Scripts\DoorScript.cs" />
     <Compile Include="Assets\Scripts\Entity.cs" />
+    <Compile Include="Assets\Scripts\GenericCollider.cs" />
     <Compile Include="Assets\Scripts\Level1\ComputerSceneTrigger.cs" />
     <Compile Include="Assets\Scripts\LevelSwitch.cs" />
     <Compile Include="Assets\Scripts\MovingPlatformScript.cs" />
