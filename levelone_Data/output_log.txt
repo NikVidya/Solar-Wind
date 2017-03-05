@@ -17,13 +17,18 @@ Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\levelone_Data\Manag
 Loading C:\Users\Nick\Desktop\Docs\312\Solar-Wind\levelone_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
 Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\levelone_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll (this message is harmless)
 Loading C:\Users\Nick\Desktop\Docs\312\Solar-Wind\levelone_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
-- Completed reload, in  0.131 seconds
+- Completed reload, in  0.028 seconds
 Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\levelone_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\levelone_Data\Managed\System.dll (this message is harmless)
 desktop: 1920x1080 120Hz; virtual: 3840x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-UnloadTime: 1.005799 ms
+UnloadTime: 5.191886 ms
+Scene 'Title Screen' couldn't be loaded because it has not been added to the build settings or the AssetBundle has not been loaded.
+To add a scene to the build settings use the menu File->Build Settings...
+ 
+(Filename:  Line: 127)
+
 Setting up 1 worker threads for Enlighten.
-  Thread -> id: 1d4c -> priority: 1 
+  Thread -> id: 4060 -> priority: 1 

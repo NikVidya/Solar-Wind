@@ -3,7 +3,7 @@
 
 	In this scene, our prisoner has just
 	been freed and has wandered about the prison
-	area for a while. He has have met no people
+	area for a while. He has met no people
 	yet, but a lone computer terminal waits
 	in the Warden's office, the warden 
 	nowhere to be found. The computer informs

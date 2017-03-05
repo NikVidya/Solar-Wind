@@ -5,12 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class RoomSwitch : GenericCollider {
 	public string roomName;
+    private bool hitOnce = false;
 
-    new void Start() {
-        
+    public override void OnHit() {
+        if (hitOnce == false) {
+            SceneManager.LoadScene(roomName);
+            hitOnce = true;
+        }
     }
-    new void OnHit() {
-        SceneManager.LoadScene(roomName);
-    }
-
 }
