@@ -19,7 +19,6 @@ public class PathingAgent : MonoBehaviour {
 	private Vector2 targetPosition;
 	private List<PathablePlatform.PlatformConnection> path = new List<PathablePlatform.PlatformConnection>();
 	private bool pathingFinished = true;
-	private bool shouldPath
 
 	// Use this for initialization
 	void Start () {
@@ -33,10 +32,10 @@ public class PathingAgent : MonoBehaviour {
 		if (hit != null && hit.collider != null) {
 			transform.position = hit.point + new Vector2(0, height);
 		}
-		FindPath ();
+		//FindPath ();
 	}
 
-	IEnumerator pathFindingCoroutine;
+	/*IEnumerator pathFindingCoroutine;
 	void FindPath(){
 		pathingFinished = false;
 		if (pathFindingCoroutine != null) {
@@ -44,10 +43,10 @@ public class PathingAgent : MonoBehaviour {
 		}
 		pathFindingCoroutine = FindPathCoroutine ();
 		StartCoroutine (pathFindingCoroutine);
-	}
+	}*/
 
 	// Bredth first search, starting with this agent's platform
-	IEnumerator FindPathCoroutine(){
+	/*IEnumerator FindPathCoroutine(){
 		// Get the platform the agent is standing on
 		PathablePlatform curPlatform = null;
 		RaycastHit2D hit = Physics2D.CapsuleCast(collider.bounds.center, collider.size, collider.direction, transform.rotation.eulerAngles.z, Vector2.down);
@@ -61,7 +60,7 @@ public class PathingAgent : MonoBehaviour {
 		}
 
 
-	}
+	}*/
 
 	// Update is called once per frame
 	void Update () {
