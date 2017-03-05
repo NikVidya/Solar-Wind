@@ -36,6 +36,13 @@ public class PlayerEntity : Entity {
 				dashCommandTimer = dashCommandTimerStart;
 			}
 		}
+		if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.LeftArrow)) {
+			if (dashCommandTimer >= 0) {
+				dashCommand = true;
+			} else {
+				dashCommandTimer = dashCommandTimerStart;
+			}
+		}
 		// jump with space or W (can't jump unless on ground)
 		if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && controller.collisions.below) {
 			velocity.y = jumpVelocity;
