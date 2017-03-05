@@ -8,13 +8,6 @@ public class Controller : RaycastController {
 
     public float maxClimbAngle = 80f;
     public float maxDescendAngle = 80f;
-    public float maxClimbAngle = 80f;
-    public float maxDescendAngle = 80f;
-
-	void Start () {
-        collider = GetComponent<BoxCollider2D>();
-        CalculateRaySpacing();
-    }
 
     public void Move(Vector3 velocity) {
         UpdateRaycastOrigins();
