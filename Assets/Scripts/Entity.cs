@@ -26,7 +26,11 @@ public abstract class Entity : MonoBehaviour {
         gravity = -(2 * jumpHeight) / Mathf.Pow(jumpTimeApex, 2);
         // derived from Vfinal = Vinitial + accel * time
         jumpVelocity = Mathf.Abs(gravity) * jumpTimeApex;
+		OnStart ();
     }
+
+	protected virtual void OnStart(){
+	}
 
     // void Update(){} movement properties are defined in child classes
 }

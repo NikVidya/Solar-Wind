@@ -17,6 +17,13 @@ public class PlayerEntity : Entity {
     private float step;
     private Transform respawnTarget;
 
+	private Animator animator;
+
+	protected override void OnStart(){
+		animator = GetComponentInChildren<Animator> ();
+		Debug.Assert (animator != null);
+	}
+
     void Update() {
         if (!isRespawning) {
             // stops gravity from changing when colliding vertically
@@ -29,6 +36,13 @@ public class PlayerEntity : Entity {
             }
             // wasd or ^v<> key input for movement
             Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+			animator.SetInteger ("direction", (int)Mathf.Sign (input.x));
+			if (Mathf.Abs(input.x) > 0.01) {
+				animator.SetFloat ("speed", 1);
+			} else {
+				animator.SetFloat ("speed", 0);
+			}
 
             // double tap a direction to dash
             if (dashCommandTimer >= 0) {
@@ -57,20 +71,20 @@ public class PlayerEntity : Entity {
                 }
                 // player's direction is changeable midair
                 if (input.x != 0 && dashTimer < 0) {
-                    playerDirection = input.x;
+					playerDirection = input.x;
                 }
                 if (dashCommand && !hasDashedThisJump) {
                     velocity.x = dashSpeed * playerDirection; // make this depend on the player's facing direction once we have sprites
                     hasDashedThisJump = true;
-                    dashTimer = dashStartTime;
+					dashTimer = dashStartTime;
                 }
 
             } else {
                 if (dashTimer < 0) {
-                    velocity.x = input.x * moveSpeed;
+					velocity.x = input.x * moveSpeed;
                 }
                 if (input.x != 0) {
-                    playerDirection = input.x;
+					playerDirection = input.x;
                 }
             }
             if (dashTimer < 0) {

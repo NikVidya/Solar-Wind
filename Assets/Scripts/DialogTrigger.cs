@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DialogTrigger : GenericCollider {
-    public Scene scene;
+	public Scene scene;
+	private bool scenePlayed = false;
 
-    public override void OnHit() {
-        Debug.Log("Hit, should start scene");
-        scene.StartScene();
-    }
+	public override void OnHit() {
+		if ( !scenePlayed ) {
+			scenePlayed = true;
+			scene.StartScene();
+		}
+	}
 }
