@@ -13,7 +13,7 @@ public class GenericCollider : RaycastController {
         base.Start();
     }
 
-    void Update() {
+    void FixedUpdate() {
         UpdateRaycastOrigins();
         HorizontalCollisions();
         VerticalCollisions();

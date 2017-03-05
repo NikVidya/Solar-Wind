@@ -79,6 +79,7 @@
     <Compile Include="Assets\Scripts\AI\PathingAgent.cs" />
     <Compile Include="Assets\Scripts\Constants.cs" />
     <Compile Include="Assets\Scripts\Controller.cs" />
+    <Compile Include="Assets\Scripts\DeathCollider.cs" />
     <Compile Include="Assets\Scripts\DialogTrigger.cs" />
     <Compile Include="Assets\Scripts\DoorScript.cs" />
     <Compile Include="Assets\Scripts\Entity.cs" />
@@ -96,6 +97,8 @@
     <Compile Include="Assets\Scripts\Narrative\SpeechBubbleBehaviour.cs" />
     <Compile Include="Assets\Scripts\PlayerEntity.cs" />
     <Compile Include="Assets\Scripts\RaycastController.cs" />
+    <Compile Include="Assets\Scripts\RespawnManager.cs" />
+    <Compile Include="Assets\Scripts\RespawnPoint.cs" />
     <Compile Include="Assets\Scripts\RoomSwitch.cs" />
     <Compile Include="Assets\Scripts\SceneTriggerScript.cs" />
     <Compile Include="Assets\Scripts\s_boundary.cs" />
