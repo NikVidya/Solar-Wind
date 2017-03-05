@@ -82,7 +82,7 @@ public class Sequence : MonoBehaviour {
 		switch (dir.func) {
 		case "speakLine":
 			int actorIndex = int.Parse (dir.data [0]);
-			if (actorIndex > parentScene.actors.Length) {
+			if (actorIndex >= parentScene.actors.Length) {
 				Debug.LogWarningFormat ("Attempted to give actor index {0} a direction, but that actor index is not in the scene!", actorIndex);
 				return;
 			}
@@ -92,6 +92,35 @@ public class Sequence : MonoBehaviour {
 				wordTime = defaultWordTime; // Default to 400 ms
 			}
 			parentScene.lib.SpeakLine (actor, dir.data [1], wordTime, this);
+			return;
+		case "moveToSpike":
+			actorIndex = int.Parse (dir.data [0]);
+			if (actorIndex >= parentScene.actors.Length) {
+				Debug.LogWarningFormat ("Attempted to give actor index {0} a direction, but that actor index is not in the scene!", actorIndex);
+				return;
+			}
+			actor = parentScene.actors [actorIndex];
+
+			int spikeIndex = int.Parse (dir.data [1]);
+			if (spikeIndex >= parentScene.spikes.Length) {
+				Debug.LogWarningFormat ("Attempted to get spike index {0}, but that spike index is not in the scene!", spikeIndex);
+				return;
+			}
+			GameObject spike = parentScene.spikes [spikeIndex];
+
+			float movetime = float.Parse (dir.data [2]);
+			parentScene.lib.MoveTo (actor, spike.transform.position, movetime, this);
+			return;
+
+		case "delay":
+			float delay = float.Parse (dir.data [0]);
+			if (delay <= 0) {
+				Debug.LogWarning ("Delay command with negative or 0 length. Why is this even here?");
+				Next ();
+				return;
+			}
+
+			parentScene.lib.Delay (delay, this);
 			return;
 
 		default:

@@ -37,8 +37,8 @@ public class PlayerEntity : Entity {
             // wasd or ^v<> key input for movement
             Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-			animator.SetInteger ("direction", (int)Mathf.Sign (input.x));
 			if (Mathf.Abs(input.x) > 0.01) {
+				animator.SetInteger ("direction", (int)Mathf.Sign (input.x));
 				animator.SetFloat ("speed", 1);
 			} else {
 				animator.SetFloat ("speed", 0);
