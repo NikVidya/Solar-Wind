@@ -36,4 +36,4 @@ camZoom( float orthographic_scale, int zoom_time )
 moveToSpike(0, 0, 0);
 speakLine(0, "Whoa, what was that", 700);
 speakLine(0, "The alarms are going crazy", 700);
-speakLine(0, "I should go see whats happening ...", 700);
+speakLine(0, "I should go see what's happening ...", 700);
