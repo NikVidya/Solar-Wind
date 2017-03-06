@@ -35,9 +35,9 @@ camZoom( float orthographic_scale, int zoom_time )
 */
 moveToSpike(0, 0, 20);
 moveToSpike(1, 1, 20);
-speakLine(1, "We're all going to die");
-speakLine(0, "Not unless we stop the self destruct sequence");
-speakLine(1, "We're all going to die");
-speakLine(0, "Calm down buddy we still have hope");
-speakLine(1, "We're all going to die");
-speakLine(0, "Um, okay just follow along you may be of some use");
+speakLine(1, "We're all going to die...");
+speakLine(0, "Not unless we stop the self destruct sequence.");
+speakLine(1, "We're all going to die...");
+speakLine(0, "Calm down buddy we still have hope.");
+speakLine(1, "We're all going to die...");
+speakLine(0, "Um, okay? Just follow along thwn, you may be of some use.");
