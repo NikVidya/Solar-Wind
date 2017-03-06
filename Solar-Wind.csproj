@@ -100,11 +100,22 @@
     <Compile Include="Assets\Scripts\RespawnManager.cs" />
     <Compile Include="Assets\Scripts\RespawnPoint.cs" />
     <Compile Include="Assets\Scripts\RoomSwitch.cs" />
+    <Compile Include="Assets\Scripts\SceneOnEnter.cs" />
     <Compile Include="Assets\Scripts\SceneTriggerScript.cs" />
     <Compile Include="Assets\Scripts\s_boundary.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Narrative\Dialog\Act 0-1\intro_dialog.txt" />
+    <None Include="Assets\Narrative\Dialog\Level0 Dialog\intro_scene.txt" />
     <None Include="Assets\Narrative\Dialog\Level1-1_dialog\Level1-1_computer_scene.txt" />
+    <None Include="Assets\Narrative\Dialog\Level1-1_dialog\Level1-1_kitchen_scene_s1_intro.txt" />
+    <None Include="Assets\Narrative\Dialog\Level1-1_dialog\Level1-1_kitchen_scene_s2a_truth.txt" />
+    <None Include="Assets\Narrative\Dialog\Level1-1_dialog\Level1-1_kitchen_scene_s2b_reassure.txt" />
+    <None Include="Assets\Narrative\Dialog\Level1-1_dialog\Level1-1_kitchen_scene_s3_conclusion.txt" />
+    <None Include="Assets\Narrative\Dialog\Level1-1_dialog\Level1-1_level_end_scene_s1_intro.txt" />
+    <None Include="Assets\Narrative\Dialog\Level1-1_dialog\Level1-1_level_end_scene_s2_beingnice.txt" />
+    <None Include="Assets\Narrative\Dialog\Level1-1_dialog\Level1-1_level_end_scene_s3_escape.txt" />
+    <None Include="Assets\Narrative\Dialog\Level4-1 Dialog\Level4-1 Meeting Captain.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s1.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s2.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s3.txt" />
