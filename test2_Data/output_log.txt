@@ -1,0 +1,102 @@
+Initialize engine version: 5.5.1f1 (88d00a7498cd)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce GTX 1060 (ID=0x1c60)
+    Vendor:   NVIDIA
+    VRAM:     3072 MB
+    Driver:   21.21.13.7866
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll (this message is harmless)
+Loading C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
+- Completed reload, in  0.027 seconds
+Platform assembly: C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Kelvin\Desktop\iat312\Solar-Wind\test2_Data\Managed\System.dll (this message is harmless)
+desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 1.836245 ms
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 5.151995 ms
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 278.
+Total: 0.214913 ms (FindLiveObjects: 0.017382 ms CreateObjectMapping: 0.031999 ms MarkObjects: 0.156839 ms  DeleteObjects: 0.003950 ms)
+
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.459061 ms
+
+Unloading 1 unused Assets to reduce memory usage. Loaded Objects now: 296.
+Total: 0.205036 ms (FindLiveObjects: 0.024888 ms CreateObjectMapping: 0.015407 ms MarkObjects: 0.160394 ms  DeleteObjects: 0.003950 ms)
+
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.305382 ms
+
+Unloading 1 unused Assets to reduce memory usage. Loaded Objects now: 278.
+Total: 0.191999 ms (FindLiveObjects: 0.022913 ms CreateObjectMapping: 0.016197 ms MarkObjects: 0.147752 ms  DeleteObjects: 0.003950 ms)
+
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.282468 ms
+
+Unloading 1 unused Assets to reduce memory usage. Loaded Objects now: 296.
+Total: 0.208987 ms (FindLiveObjects: 0.024493 ms CreateObjectMapping: 0.015802 ms MarkObjects: 0.163950 ms  DeleteObjects: 0.003555 ms)
+
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.319209 ms
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 394.
+Total: 0.218073 ms (FindLiveObjects: 0.026864 ms CreateObjectMapping: 0.018962 ms MarkObjects: 0.163950 ms  DeleteObjects: 0.007901 ms)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.521876 ms
+
+Unloading 28 unused Assets to reduce memory usage. Loaded Objects now: 1128.
+Total: 0.402172 ms (FindLiveObjects: 0.092444 ms CreateObjectMapping: 0.022123 ms MarkObjects: 0.231110 ms  DeleteObjects: 0.055703 ms)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at Scene.StartScene () [0x00000] in <filename unknown>:0 
+  at SceneTriggerScript.OnTriggerEnter2D (UnityEngine.Collider2D other) [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+NullReferenceException: Object reference not set to an instance of an object
+  at Scene.EndScene () [0x00000] in <filename unknown>:0 
+  at Sequence.Next () [0x00000] in <filename unknown>:0 
+  at NarrativeUtils+<SpeakLine>c__AnonStorey2.<>m__0 () [0x00000] in <filename unknown>:0 
+  at SpeechBubble.OnBubbleFinished () [0x00000] in <filename unknown>:0 
+  at DialogBubble.HandleBubbleOutFinished () [0x00000] in <filename unknown>:0 
+  at SpeechBubbleBehaviour.OnStateExit (UnityEngine.Animator animator, AnimatorStateInfo stateInfo, Int32 layerIndex) [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 3900 -> priority: 1 
+  Thread -> id: 3fc8 -> priority: 1 
