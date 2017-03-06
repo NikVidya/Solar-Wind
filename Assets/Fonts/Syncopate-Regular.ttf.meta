@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 465b859308699254d8d499b03049e64a
+timeCreated: 1488766725
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Syncopate
+  fontNames:
+  - Syncopate
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 1d88bb02fecf6fd4cbdd37dffa33877d, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
