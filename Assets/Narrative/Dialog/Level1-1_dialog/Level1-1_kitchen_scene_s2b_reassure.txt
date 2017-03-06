@@ -1,0 +1,12 @@
+﻿/*
+
+Kitchen Scene - s2 Reassure option
+
+Player told the chef that they knew what they where doing
+
+Chef is still concerned, wants to go with the player
+
+*/
+speakLine(1, "Oh...", 100);
+speakLine(1, "Well, I don't want to stay here", 200);
+speakLine(1, "I'll go with you, maybe I can help", 300);

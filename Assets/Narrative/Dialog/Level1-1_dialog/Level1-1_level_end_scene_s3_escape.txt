@@ -1,0 +1,8 @@
+﻿/*
+
+Level end scene - 3 Escape
+
+The player leaves
+
+*/
+moveToSpike(0, 2, 600);

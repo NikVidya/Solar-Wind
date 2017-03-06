@@ -1,0 +1,9 @@
+﻿/*
+
+Level end scene - 2 Being nice
+
+The player just reassured the chef that they would be ok even though they can't come with
+
+*/
+speakLine(1, "Oh...", 200);
+speakLine(1, "Well I guess I can wait here", 200);
