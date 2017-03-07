@@ -95,23 +95,19 @@ public class PathingAgent : MonoBehaviour {
 		if (start.connectedPlatform == targ) { // Check if this platform is the target
 			return returnList;
 		}
-		List<PathablePlatform.PlatformConnection> bestPath = null;
-		for (int i = 0; i < start.connectedPlatform.connections.Count; i++) {
-			List<PathablePlatform.PlatformConnection> subPath = RecursivePathSearch (start.connectedPlatform.connections [i], targ, startTime); // Find the target in the children
+
+		// Get a new list and depth sort by distance to target
+		List<PathablePlatform.PlatformConnection> connections = new List<PathablePlatform.PlatformConnection> (start.connectedPlatform.connections.ToArray ());
+		connections.Sort (delegate(PathablePlatform.PlatformConnection x, PathablePlatform.PlatformConnection y) {
+			return (int)Mathf.Sign(Vector3.Distance(x.connectedPlatform.transform.position, target.position) - Vector3.Distance(y.connectedPlatform.transform.position, target.position));
+		});
+
+		for (int i = 0; i < connections.Count; i++) {
+			List<PathablePlatform.PlatformConnection> subPath = RecursivePathSearch (connections [i], targ, startTime); // Find the target in the children
 			if (subPath != null) {
-				string tmp = "Potential Path: ";
-				for (int j = 0; j < subPath.Count; j++) {
-					tmp += subPath [j].connectedPlatform.gameObject.name + " -> ";
-				}
-				Debug.Log (tmp);
-				if (bestPath == null || subPath.Count < bestPath.Count) {
-					bestPath = subPath;
-				}
+				subPath.Insert (0, start);
+				return subPath;
 			}
-		}
-		if (bestPath != null) {
-			returnList.AddRange (bestPath); // Add the best path from this connection to the list
-			return returnList;
 		}
 		return null;
 	}
