@@ -1,0 +1,11 @@
+﻿/*
+
+Kitchen Scene - s2 Truth option
+
+Player told the chef how to disable the self destruct
+
+Chef is happy that there is hope, wants to come with player
+
+*/
+speakLine(1, "Oh thank god!", 100);
+speakLine(1, "What are we waiting for? Let's go!", 200);

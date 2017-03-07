@@ -11,7 +11,7 @@ public abstract class Entity : MonoBehaviour {
     // speed of horizontal running
     public float moveSpeed = 6;
     // player can't control jumps easily
-    public float midairAccel = 0.2f;
+    public float interia = 0.2f;
     protected float midairVelocitySmoothing;
 
     protected float gravity;
@@ -26,7 +26,11 @@ public abstract class Entity : MonoBehaviour {
         gravity = -(2 * jumpHeight) / Mathf.Pow(jumpTimeApex, 2);
         // derived from Vfinal = Vinitial + accel * time
         jumpVelocity = Mathf.Abs(gravity) * jumpTimeApex;
+		OnStart ();
     }
+
+	protected virtual void OnStart(){
+	}
 
     // void Update(){} movement properties are defined in child classes
 }

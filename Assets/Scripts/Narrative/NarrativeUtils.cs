@@ -57,4 +57,53 @@ public class NarrativeUtils : MonoBehaviour {
 			sequence.MakeDecision(choice);
 		});
 	}
+
+	IEnumerator moveCoroutine;
+	public void MoveTo(GameObject actor, Vector3 target, float time, Sequence sequence){
+		if (time > 0) {
+			if (moveCoroutine != null) {
+				StopCoroutine (moveCoroutine);
+			}
+			moveCoroutine = MoveToCoroutine (actor, target, time/1000, sequence);
+			StartCoroutine (moveCoroutine);
+		} else {
+			actor.transform.position = target;
+			sequence.Next ();
+		}
+	}
+	IEnumerator MoveToCoroutine(GameObject actor, Vector3 target, float time, Sequence sequence){
+		Vector3 start = actor.transform.position;
+		float startTime = Time.time;
+		Animator animator = actor.GetComponentInChildren<Animator> ();
+
+		if (animator != null) {
+			animator.SetFloat ("speed", 1);
+			animator.SetInteger ("direction", (int)Mathf.Sign (target.x - actor.transform.position.x));
+		}
+		while (Time.time - startTime < time) {
+			actor.transform.position = Vector3.Lerp (start, target, (Time.time - startTime) / time);
+			yield return null;
+		}
+		if (animator != null) {
+			animator.SetFloat ("speed", 0);
+		}
+		sequence.Next ();
+	}
+
+	IEnumerator delayCoroutine;
+	public void Delay(float time, Sequence sequence){
+		if (time <= 0) {
+			sequence.Next ();
+			return;
+		}
+		if (delayCoroutine != null) {
+			StopCoroutine (delayCoroutine);
+		}
+		delayCoroutine = DelayCoroutine (time, sequence);
+		StartCoroutine (delayCoroutine);
+	}
+	IEnumerator DelayCoroutine(float time, Sequence sequence){
+		yield return new WaitForSeconds (time / 1000);
+		sequence.Next ();
+	}
 }
