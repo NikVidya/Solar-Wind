@@ -22,11 +22,14 @@ public class PathablePlatform : MonoBehaviour {
 	[Tooltip("Show the pathing gizmos")]
 	public bool showPathingData = true;
 
+	[System.Serializable]
 	public enum ConnectionType{
-		WALK,
-		JUMP,
-		DROP
+		EDGE,
+		LEAP,
+		DROP_THROUGH
 	}
+
+	[System.Serializable]
 	public class PlatformConnection
 	{
 		public ConnectionType connectionType;
@@ -37,7 +40,10 @@ public class PathablePlatform : MonoBehaviour {
 			connectedPlatform = platform;
 		}
 	}
-	private List<PlatformConnection> connections = new List<PlatformConnection>();
+
+	[SerializeField]
+	public List<PlatformConnection> connections = new List<PlatformConnection>();
+
 	private Collider2D platformCollider;
 	private Vector3 oobBounds;
 
@@ -60,6 +66,12 @@ public class PathablePlatform : MonoBehaviour {
 		if (!showPathingData) {
 			return;
 		}
+
+		platformCollider = GetComponent<Collider2D> ();
+		if (platformCollider == null) {
+			Debug.LogError ("Platform was unable to obtain a reference to it's collider");
+		}
+
 		if (Time.time - 0.1 > lastUpdateTime) {
 			lastUpdateTime = Time.time;
 			FindConnectedPlatforms ();
@@ -81,27 +93,39 @@ public class PathablePlatform : MonoBehaviour {
 		}
 		Gizmos.color = new Color (0, 0, 1, 0.2f);//Color.blue;
 		// short and low -> long and low -> short and high -> long and high
-		float searchWidth = agentJumpDistance;
+		float rightSearchWidth = agentJumpDistance;
+		float leftSearchWidth = -agentJumpDistance;
 		for (float y = agentJumpHeight; y > -agentDropHeight; y -= gridUnit) {
-			for (float x = 0; Mathf.Abs(x) <= searchWidth; x -= gridUnit) {
-				Vector2 origin = leftEdge + (new Vector2 (x + (gridUnit * -0.5f), y - gridUnit * 0.5f));
+			for (float x = leftSearchWidth; Mathf.Abs(x) <= rightSearchWidth; x += gridUnit) {
+				Vector2 origin = rightEdge + (new Vector2 (x + gridUnit, y - gridUnit));
 				Gizmos.DrawCube (origin, new Vector3 (gridUnit, gridUnit, gridUnit));
-				//Debug.DrawRay (origin, new Vector2(0,-0.2f), Color.blue, 10);
 			}
-			searchWidth += agentFloatDistance;
+			rightSearchWidth += agentFloatDistance;
+			if (y > gridUnit) {
+				leftSearchWidth += agentFloatDistance;
+			} else if (y > 0) {
+				leftSearchWidth = 0;
+			} else if (y < -gridUnit) {
+				leftSearchWidth -= agentFloatDistance;
+			}
 		}
 
-		// short and low -> long and low -> short and high -> long and high
-		searchWidth = agentJumpDistance;
+		rightSearchWidth = agentJumpDistance;
+		leftSearchWidth = agentJumpDistance;
 		for (float y = agentJumpHeight; y > -agentDropHeight; y -= gridUnit) {
-			for (float x = 0; Mathf.Abs(x) <= searchWidth; x += gridUnit) {
-				Vector2 origin = rightEdge + (new Vector2 (x + (gridUnit * -0.5f), y - gridUnit * 0.5f));
+			for (float x = leftSearchWidth; Mathf.Abs(x) <= rightSearchWidth; x -= gridUnit) {
+				Vector2 origin = leftEdge + (new Vector2 (x - gridUnit, y - gridUnit));
 				Gizmos.DrawCube (origin, new Vector3 (gridUnit, gridUnit, gridUnit));
-				//Debug.DrawRay (origin, new Vector2(0,-0.2f), Color.blue, 10);
 			}
-			searchWidth += agentFloatDistance;
+			rightSearchWidth += agentFloatDistance;
+			if (y > gridUnit) {
+				leftSearchWidth -= agentFloatDistance;
+			} else if (y > 0) {
+				leftSearchWidth = 0;
+			} else if (y < -gridUnit) {
+				leftSearchWidth += agentFloatDistance;
+			}
 		}
-
 	}
 	#endif
 
@@ -138,8 +162,7 @@ public class PathablePlatform : MonoBehaviour {
 			for (int i = 0; i < hits.Length; i++) {
 				PathablePlatform platform = hits [i].collider.gameObject.GetComponent<PathablePlatform> ();
 				if (platform != null) {
-					PlatformConnection connection = new PlatformConnection (ConnectionType.JUMP, platform);
-					connections.Add (connection);
+					AddPlatformConnection (platform, ConnectionType.LEAP);
 				}
 			}
 		}
@@ -150,26 +173,49 @@ public class PathablePlatform : MonoBehaviour {
 		GetEdgePlatforms(rightEdge, Vector2.right);
 	}
 
+	protected void AddPlatformConnection(PathablePlatform platform, ConnectionType type){
+		// Check if this platform is self, then don't add
+		if (platform == this) {
+			return;
+		}
+		// Check if this platform has already been added to the list
+		if (connections.Exists (x => x.connectedPlatform == platform)) {
+			return;
+		}
+		PlatformConnection conneciton = new PlatformConnection (type, platform);
+		connections.Add (conneciton);
+	}
+
 	public void GetEdgePlatforms(Vector2 edge, Vector2 dir){
 		if (gridUnit <= 0) {
 			return;
 		}
+
+
 		// short and low -> long and low -> short and high -> long and high
-		float searchWidth = agentJumpDistance;
+		float rightSearchWidth = agentJumpDistance;
+		float leftSearchWidth = -agentJumpDistance * Mathf.Sign(dir.x);
 		for (float y = agentJumpHeight; y > -agentDropHeight; y -= gridUnit) {
-			for (float x = 0; Mathf.Abs(x) <= searchWidth; x += gridUnit * dir.x) {
-				Vector2 origin = edge + (new Vector2 (x + (gridUnit * 0.5f * dir.x), y - gridUnit * 0.5f));
+			for (float x = leftSearchWidth; Mathf.Abs(x) <= rightSearchWidth; x += gridUnit * Mathf.Sign(dir.x)) {
+				Vector2 origin = edge + (new Vector2 (x + (gridUnit * Mathf.Sign(dir.x)), y - gridUnit + gridUnit/2.0f));
 				RaycastHit2D[] hits = Physics2D.RaycastAll (origin, Vector2.down, agentDropHeight - y);
 				if (hits.Length > 0) {
 					for (int i = 0; i < hits.Length; i++) {
 						PathablePlatform platform = hits[i].collider.gameObject.GetComponent<PathablePlatform>();
 						if (platform != null) {
-							connections.Add (new PlatformConnection (ConnectionType.JUMP, platform));
+							AddPlatformConnection (platform, ConnectionType.EDGE);
 						}
 					}
 				}
 			}
-			searchWidth += agentFloatDistance;
+			rightSearchWidth += agentFloatDistance;
+			if (y > gridUnit) {
+				leftSearchWidth += agentFloatDistance * Mathf.Sin(dir.x);
+			} else if (y > 0) {
+				leftSearchWidth = 0;
+			} else if (y < -gridUnit) {
+				leftSearchWidth -= agentFloatDistance * Mathf.Sin(dir.x);
+			}
 		}
 	}
 }
