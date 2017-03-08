@@ -11,7 +11,7 @@ public class PathablePlatform : MonoBehaviour {
 	[Tooltip("How far forward can the agent jump from the ground")]
 	public float agentJumpDistance = 4f;
 	[Tooltip("How far the agent can move laterally for each unit it falls")]
-	public float agentFloatDistance = 0.5f;
+	public float agentFloatDistance = 0.2f;
 	[Tooltip("How far can the agent drop before it shouldn't be considered a valid move")]
 	public float agentDropHeight = 10f;
 	[Tooltip("Number of world units per pathfinding grid unit")]
@@ -44,11 +44,11 @@ public class PathablePlatform : MonoBehaviour {
 	[SerializeField]
 	public List<PlatformConnection> connections = new List<PlatformConnection>();
 
-	private Collider2D platformCollider;
+	public Collider2D platformCollider;
 	private Vector3 oobBounds;
 
-	private Vector2 leftEdge;
-	private Vector2 rightEdge;
+	public Vector2 leftEdge;
+	public Vector2 rightEdge;
 
 	void Awake(){
 		platformCollider = GetComponent<Collider2D> ();
@@ -77,8 +77,9 @@ public class PathablePlatform : MonoBehaviour {
 			FindConnectedPlatforms ();
 		}
 
-		Gizmos.color = Color.yellow;
+		Gizmos.color = Color.red;
 		Gizmos.DrawWireSphere (leftEdge, 0.2f);
+		Gizmos.color = Color.green;
 		Gizmos.DrawWireSphere (rightEdge, 0.2f);
 
 		for (int i = 0; i < connections.Count; i++) {
@@ -138,11 +139,11 @@ public class PathablePlatform : MonoBehaviour {
 		transform.rotation = Quaternion.identity;
 		if (edgeCollider != null) {
 			// Get the first and last points as the edges
-			leftEdge = edgeCollider.points[0];
-			rightEdge = edgeCollider.points [edgeCollider.pointCount - 1];
+			leftEdge = edgeCollider.points[0] + new Vector2(0.2f,0);
+			rightEdge = edgeCollider.points [edgeCollider.pointCount - 1]  - new Vector2(0.2f,0);
 		} else {
-			leftEdge = new Vector2 (-platformCollider.bounds.size.x, platformCollider.bounds.max.y - platformCollider.gameObject.transform.position.y) * 0.5f;
-			rightEdge = new Vector2 (platformCollider.bounds.size.x, platformCollider.bounds.max.y - platformCollider.gameObject.transform.position.y) * 0.5f;
+			leftEdge = new Vector2 (-platformCollider.bounds.size.x + 0.2f, platformCollider.bounds.max.y - platformCollider.gameObject.transform.position.y) * 0.5f;
+			rightEdge = new Vector2 (platformCollider.bounds.size.x - 0.2f, platformCollider.bounds.max.y - platformCollider.gameObject.transform.position.y) * 0.5f;
 		}
 		oobBounds = platformCollider.bounds.extents * 2f;
 		if (oobBounds.y < 0.1f) {
