@@ -10,12 +10,15 @@ public class PlayerEntity : Entity {
     private bool dashCommand = false;
     private float dashCommandTimer;
     private float dashCommandTimerStart = 0.2f;
+
     private float playerDirection = 1;
+
     public bool isRespawning = false;
 
     private float speed;
     private float step;
     private Transform respawnTarget;
+    
 
 	private Animator animator;
 
@@ -67,7 +70,7 @@ public class PlayerEntity : Entity {
                     velocity.x = 0;
                 }
                 if (dashTimer < 0) {
-                    velocity.x = Mathf.SmoothDamp(velocity.x, input.x * moveSpeed, ref midairVelocitySmoothing, interia);
+                    velocity.x = Mathf.SmoothDamp(velocity.x, input.x * moveSpeed , ref midairVelocitySmoothing, inertia );
                 }
                 // player's direction is changeable midair
                 if (input.x != 0 && dashTimer < 0) {

@@ -11,7 +11,7 @@ public abstract class Entity : MonoBehaviour {
     // speed of horizontal running
     public float moveSpeed = 6;
     // player can't control jumps easily
-    public float interia = 0.2f;
+    public float inertia = 0.2f;
     protected float midairVelocitySmoothing;
 
     protected float gravity;
