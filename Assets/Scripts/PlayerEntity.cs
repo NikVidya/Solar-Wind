@@ -17,7 +17,7 @@ public class PlayerEntity : Entity {
 
     private float speed;
     private float step;
-    private Transform respawnTarget;
+    public Transform respawnTarget;
     
 
 	private Animator animator;
@@ -96,11 +96,6 @@ public class PlayerEntity : Entity {
                 dashTimer -= Time.deltaTime;
             }
             controller.Move(velocity * Time.deltaTime);
-        } else {
-            transform.position = Vector3.MoveTowards(transform.position, respawnTarget.position, step);
-            if (transform.position.x == respawnTarget.position.x && transform.position.y == respawnTarget.position.y) {
-                isRespawning = false;
-            }
         }
     }
     public void ResetMovement(string playerFacingDirection) {
@@ -114,10 +109,24 @@ public class PlayerEntity : Entity {
             playerDirection = -1;
         }
     }
-    public void Respawn(Transform target) {
-        speed = 10;
-        step = speed * Time.deltaTime;
-        respawnTarget = target;
-        isRespawning = true;
+    public void Death(Transform target) {
+        if (!isRespawning) {
+            speed = 7;
+            step = speed * Time.deltaTime;
+            respawnTarget = target;
+            isRespawning = true;
+            Debug.Log("started death coroutine");
+            StartCoroutine(Respawn(target));
+        }
+    }
+    IEnumerator Respawn(Transform target) {
+        // pauses on player death, then respawns
+        yield return new WaitForSeconds(2f);
+        while (Mathf.Abs(transform.position.x - target.position.x) > 0.2 || Mathf.Abs(transform.position.y - target.position.y) > 0.2) {
+            transform.position = Vector2.MoveTowards(transform.position, respawnTarget.position, step);
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.5f);
+        isRespawning = false;
     }
 }
