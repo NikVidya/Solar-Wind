@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeathCollider : GenericCollider {
+public class DeathCollider : MonoBehaviour {
     public RespawnManager manager;
 
-    public override void OnHit() {
+    void OnTriggerEnter2D(Collider2D col) {
         manager.PlayerDeath();
     }
 }

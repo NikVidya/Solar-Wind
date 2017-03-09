@@ -16,6 +16,6 @@ moveToSpike(0,0,1000);
 moveToSpike(1,1,1000);
 speakLine(0, "Damn, the door is blocked", 400);
 speakLine(1, "Maybe we can move it", 300);
-speakLine(0, "It's too heavy, bit I think I can fit through this gap", 400);
+speakLine(0, "It's too heavy, but I think I can fit through this gap", 400);
 speakLine(1, "What? That's way too small!", 400);
 speakLine(1, "I can't fit!", 200);
