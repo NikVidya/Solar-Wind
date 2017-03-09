@@ -8,19 +8,23 @@ public class PathingAgent : MonoBehaviour {
 
 	[Header("Agent Movement Properties")]
 	[Tooltip("Max travel speed in units/second")]
-	public float maxSpeed = 2;
+	public float maxSpeed = 5;
 	[Tooltip("Acceleration rate in units/second^2")]
-	public float acceleration = 0.5f;
+	public float acceleration = 4f;
 	[Tooltip("Maximum unit height of jump")]
 	public float jumpHeight = 3;
+	[Tooltip("Maximum time to spend chasing target")]
+	public float timeBeforeTeleport = 3;
+	[Tooltip("Distance range to stop at the target")]
+	public float endMaxDistance = 2;
 
 	[Header("Agent Pathfinding Properties")]
-	[Tooltip("Height of the agent")]
-	public float height = 0.5f;
-	[Tooltip("Length of time to spend moving towards target (in seconds)")]
-	public float maxMovingTime = 3f; // In seconds
 	[Tooltip("Length of time to spend pathfinding (in milliseconds) (keep small to avoid framedrops)")]
 	public float maxPathingTime = 20f; // In milliseconds
+	[Tooltip("How much the target has to move before updating the path")]
+	public float targetTolerance = 0.2f;
+	[Tooltip("Minimum time between path updates in seconds")]
+	public float minPathAge = 0.5f;
 
 	public Transform target;
 
@@ -29,17 +33,12 @@ public class PathingAgent : MonoBehaviour {
 	private List<PathablePlatform.PlatformConnection> path;
 	private List<PathablePlatform> platformsConsidered = new List<PathablePlatform>();
 	private int layerMask = 1 << 8;
+	private float height;
 	IEnumerator pathFindingCoroutine;
 	IEnumerator movementCoroutine;
 	PathablePlatform.PlatformConnection nextConnection = null;
 
-	float lastPathTime;
-	Vector3 oldTargetPos;
-	bool isMoving = false;
-
 	float curSpeed;
-	float jumpStartTime;
-	float jumpMaxTime;
 
 	void Start () {
 		myCollider = GetComponent<CapsuleCollider2D> ();
@@ -47,196 +46,229 @@ public class PathingAgent : MonoBehaviour {
 			Debug.LogError ("Pathing Agent needs a capsule collider 2d");
 			return;
 		}
+		height = myCollider.bounds.extents.y;
 		// Put the agent on the ground
-		RaycastHit2D hit = Physics2D.CapsuleCast(myCollider.bounds.center + new Vector3(0,height*2,0), myCollider.size, myCollider.direction, transform.rotation.eulerAngles.z, Vector2.down, Mathf.Infinity, layerMask);
-		if ( hit.collider != null) {
-			currentPlatform = hit.collider.gameObject.GetComponent<PathablePlatform> ();
-			if (currentPlatform == null) {
-				Debug.LogWarning ("NPC agent is not on a pathable surface");
-			}
-		}
+		PutOnGround();
 	}
 
+	bool isActioning = false;
+	bool onLastPlatform = false;
+	// Always move to the closest point on the current platform that makes the jump point within range
+	Vector3 jumpTarget;
+	Vector3 lastTargetPathPosition = new Vector3 ();
+	float lastPathTime = 0;
+	float chaseStartedTime;
+	bool pathHasChanged = false;
+	PathablePlatform targetPlatform;
 	void Update(){
+		// Get the platform the target is on
+		// Get the target platform to move to
+		RaycastHit2D hit = Physics2D.Raycast(target.transform.position + new Vector3(0,1,0), Vector2.down, Mathf.Infinity, layerMask);
+		if ( hit.collider != null) {
+			targetPlatform = hit.collider.gameObject.GetComponent<PathablePlatform>();
+		}
+		if (targetPlatform == currentPlatform && currentPlatform != null) {
+			onLastPlatform = true;
+		}
 
-		if (Time.time - lastPathTime > 1 &&  Vector3.Distance(oldTargetPos, target.position) > 0.1f) {
+		// Handle path update
+		if (Vector3.Distance (lastTargetPathPosition, target.position) > targetTolerance && (Time.time - lastPathTime) > minPathAge && !isActioning && !onLastPlatform ) {
+			lastPathTime = Time.time;
+			lastTargetPathPosition = target.position;
+			onLastPlatform = false;
+			chaseStartedTime = Time.time;
+			pathHasChanged = true;
+
+			// Clear out the current path, it's invalid
 			if (path != null) {
 				path.Clear ();
 			}
 			nextConnection = null;
-			lastPathTime = Time.time;
-			oldTargetPos = target.position;
 
+			// Try and find the collider under me
+			hit = Physics2D.CapsuleCast(myCollider.bounds.center + new Vector3(0, 0.1f), myCollider.size, myCollider.direction, 0, Vector2.down, height*2.0f, layerMask);
+			if (hit.collider != null) {
+				currentPlatform = hit.collider.gameObject.GetComponent<PathablePlatform>();
+			}
+
+			// Stop trying to find a path to the last target
 			if (pathFindingCoroutine != null) {
 				StopCoroutine (pathFindingCoroutine);
 			}
+			// Start finding a new path
 			pathFindingCoroutine = FindPath ();
 			StartCoroutine (pathFindingCoroutine);
 		}
 
-		if (path != null && path.Count > 0) {
-			if (nextConnection == null) {
-				nextConnection = path [0]; // Pulled a new step from the path
-				jumpStartTime = -1;
-				jumpMaxTime = -1;
+		// Handle agent movement
+		// Move whenever there is a path
+		if ( !isActioning && nextConnection != null && currentPlatform != null || onLastPlatform) {
+			isActioning = true;
+			// We are done with whatever movement was being done, so stop the coroutine and start the next one
+			if (movementCoroutine != null) {
+				StopCoroutine (movementCoroutine);
 			}
-			// Move to a point on the platform
-			Vector3 moveTarget;
-			Vector3 jumpTarget;
-			switch (nextConnection.connectionType){
-			case PathablePlatform.ConnectionType.EDGE:
-				if (nextConnection.connectedPlatform.platformCollider.bounds.center.x > currentPlatform.platformCollider.bounds.center.x) {
-					moveTarget = currentPlatform.rightEdge;
+
+			// Determine if we are about to jump
+			Vector3 edge = currentPlatform.leftEdge;
+			if (!onLastPlatform) {
+				jumpTarget = nextConnection.connectedPlatform.rightEdge;
+				if (nextConnection.connectedPlatform.platformCollider.bounds.center.x > transform.position.x) {
+					edge = currentPlatform.rightEdge;
 					jumpTarget = nextConnection.connectedPlatform.leftEdge;
-				} else {
-					moveTarget = currentPlatform.leftEdge;
-					jumpTarget = nextConnection.connectedPlatform.rightEdge;
 				}
-				break;
-			case PathablePlatform.ConnectionType.LEAP:
-				if (nextConnection.connectedPlatform.platformCollider.bounds.center.x > currentPlatform.platformCollider.bounds.center.x) {
-					jumpTarget = nextConnection.connectedPlatform.leftEdge;
-				} else {
-					jumpTarget = nextConnection.connectedPlatform.rightEdge;
+			} else {
+				jumpTarget = target.position;
+				if (target.position.x > transform.position.x) {
+					edge = currentPlatform.rightEdge;
 				}
-				// Get movement target
-				RaycastHit2D hit = Physics2D.Raycast (jumpTarget - new Vector3 (0, height), Vector2.down, Mathf.Infinity, layerMask);
-				if (hit != null && hit.collider != null) {
-					moveTarget = hit.point;
-				} else {
-					moveTarget = jumpTarget;
-				}
-				break;
-			default:
-				moveTarget = jumpTarget = transform.position;
-				break;
 			}
-
-			Debug.DrawLine (transform.position, moveTarget, Color.cyan, 1);
-			Debug.DrawLine (currentPlatform.platformCollider.bounds.center, nextConnection.connectedPlatform.platformCollider.bounds.center, Color.blue, 1);
-
-			if (transform.position.x < moveTarget.x && Mathf.Abs(transform.position.x - moveTarget.x) > 0.1f && jumpStartTime < 0) 
-			{
-				MoveDirection (Vector2.right);
+			if ( (Mathf.Abs (jumpTarget.x - transform.position.x) < currentPlatform.agentJumpDistance || Mathf.Abs (edge.x - transform.position.x) < 0.1f) && !onLastPlatform) 
+			{ // Close enough to make the jump
+				float jumpTime = Mathf.Max (1, Vector3.Distance (transform.position, jumpTarget) / maxSpeed);
+				movementCoroutine = JumpFromTo (transform.position, jumpTarget, jumpTime);
 			} 
-			else if(transform.position.x > moveTarget.x && Mathf.Abs(transform.position.x - moveTarget.x) > 0.1f && jumpStartTime < 0) 
-			{
-				MoveDirection (Vector2.left);
+			else if (!onLastPlatform) 
+			{ // Not close enough to make the jump
+				movementCoroutine = MoveTowards (jumpTarget, edge, true);
 			} 
-			else if(Mathf.Abs(transform.position.x - moveTarget.x) < 0.1f || jumpStartTime > 0) 
+			else 
 			{
-				// Jump to the next point
+				movementCoroutine = MoveTowards (target.position, edge, false);
+			}
+			StartCoroutine (movementCoroutine);
+		}
 
-				if (jumpMaxTime < 0) {
-					switch(nextConnection.connectionType){
-					case PathablePlatform.ConnectionType.EDGE:
-						jumpMaxTime = Vector3.Distance(moveTarget, jumpTarget) / curSpeed; // Amount of time it would take to travel that distance at current speed
-						break;
-					case PathablePlatform.ConnectionType.LEAP:
-						jumpMaxTime = 1.0f; // Flat time
-						break;
-					}
-					Debug.LogFormat ("Jumping over time {0}", jumpMaxTime);
-				}
-				if (jumpStartTime < 0) {
-					jumpStartTime = Time.time;
-				}
+		if (Time.time - chaseStartedTime > timeBeforeTeleport && pathHasChanged) {
+			if (movementCoroutine != null) {
+				StopCoroutine (movementCoroutine);
+			}
+			TeleportToTarget ();
+		}
+	}
 
-				JumpFromTo(moveTarget, jumpTarget);
+	void TeleportToTarget(){
+		pathHasChanged = false;
+		path = null;
+		nextConnection = null;
+		FinishedAction ( false );
+		ParticleSystem teleportSystem = GetComponentInChildren<ParticleSystem> ();
+		if (teleportSystem != null) {
+			teleportSystem.Play();
+		}
+		float randomLanding = Random.Range (-endMaxDistance, endMaxDistance);
+		transform.position = target.position;
+		PutOnGround ();
+	}
+
+	void FinishedAction( bool shouldPop, bool teleportOnNoPath = false ){
+		isActioning = false;
+		onLastPlatform = false;
+		if (shouldPop) {
+			if (path == null || path.Count <= 1) {
+				nextConnection = null;
+				return;
+			}
+			path.RemoveAt (0);
+			nextConnection = path [0];
+		}
+	}
+
+	void PutOnGround(){
+		// Capsule cast down from the actor location and place it where it lands
+		RaycastHit2D hit = Physics2D.CapsuleCast(myCollider.bounds.center + new Vector3(0, 0.1f), myCollider.size, myCollider.direction, 0, Vector2.down, height*2.0f, layerMask);
+		if (hit.collider != null) {
+			currentPlatform = hit.collider.gameObject.GetComponent<PathablePlatform>();
+			transform.position = new Vector2 (transform.position.x, hit.point.y + height);
+		} else {
+			Debug.Log ("unable to place on ground");
+			currentPlatform = null;
+		}
+	}
+
+	IEnumerator MoveTowards(Vector3 target, Vector3 edge, bool jumpTo ){
+		float endDistance = Random.Range (0, endMaxDistance);
+		if (currentPlatform == null) {
+			transform.position = edge;
+		} else {
+			while ( 
+					(Mathf.Abs (target.x - transform.position.x) > currentPlatform.agentJumpDistance && Mathf.Abs (edge.x - transform.position.x) > 0.1f && jumpTo)
+				||	(Mathf.Abs (target.x - transform.position.x) > endDistance && Mathf.Abs (edge.x - transform.position.x) > 0.1f && !jumpTo)
+			) {
+				
+				curSpeed += acceleration * Time.deltaTime * Mathf.Sign (target.x - transform.position.x) * Random.Range (0.3f, 1.2f);
+				curSpeed = Mathf.Min (Mathf.Max (-maxSpeed, curSpeed), maxSpeed); // Clamp speed
+
+				Vector2 nextPos = new Vector2 (transform.position.x + (curSpeed * Random.Range (0.6f, 1.2f) * Time.deltaTime), transform.position.y);
+
+				transform.position = nextPos;
+				PutOnGround ();
+
+				yield return null;
 			}
 		}
-		if (jumpStartTime < 0) {
-			GroundAgent ();
+		if (!jumpTo) {
+			curSpeed = 0;
 		}
+		FinishedAction (false);
+		yield break;
 	}
 
-	void GroundAgent(){
-		RaycastHit2D hit = Physics2D.Raycast(transform.position + new Vector3(0, height), Vector2.down, Mathf.Infinity, layerMask);
-		if (hit != null && hit.collider != null) {
-			transform.position = hit.point + new Vector2(0, height);
-			currentPlatform = hit.collider.gameObject.GetComponent<PathablePlatform> ();
-			if (currentPlatform == null) {
-				Debug.LogWarning ("NPC agent is not on a pathable surface");
-			}
-		}
-	}
-
-	void MoveDirection(Vector2 dir){
-		curSpeed += acceleration * Mathf.Sign (dir.x) * Time.deltaTime;
-		if (curSpeed > maxSpeed) {
-			curSpeed = maxSpeed;
-		} else if(curSpeed < -maxSpeed) {
-			curSpeed = -maxSpeed;
+	IEnumerator JumpFromTo(Vector2 p0, Vector2 p2, float time){
+		
+		if (time <= 0) {
+			Debug.LogWarning ("Attempted to make 0 second jump");
+			time = 0.1f;
 		}
 
-		Vector3 targetPos = transform.position + new Vector3(curSpeed * Time.deltaTime, 0, 0);
-		transform.position = targetPos;
-		// Find that position on the ground
-		Debug.DrawLine(transform.position, targetPos, Color.red, 1);
-	}
-
-	void JumpFromTo(Vector3 p0, Vector3 p2){
-		if (jumpMaxTime <= 0) {
-			Debug.LogWarning ("Attempted to make jump with max time of 0");
-			jumpMaxTime = 0.1f;
+		if ((p0.x > p2.x && curSpeed > 0) || (p0.x < p2.x && curSpeed < 0)) { // Jumping to the left, but speed to the right || jumping to the right, but speed to the left
+			curSpeed = 0; // Kill speed
 		}
-		float t = (Time.time - jumpStartTime) / jumpMaxTime;
+
+		float startTime = Time.time;
 		float jumpApex = p0.y + jumpHeight;
 		if (jumpApex < p2.y) {
 			jumpApex = p2.y + jumpHeight * 0.2f;
 		}
 		Vector2 p1 = new Vector2 (p0.x + ((p2.x - p0.x) * 0.5f), jumpApex); // Control point for the apex of the jump
-		Debug.DrawLine(p0,p1, Color.white, 1);
-		Debug.DrawLine(p1,p2, Color.magenta, 1);
 
-		float curveX = Mathf.Pow (1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Mathf.Pow (t, 2) * p2.x;
-		float curveY = Mathf.Pow (1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Mathf.Pow (t, 2) * p2.y;
+		float t = 0;
+		while (t < 1) {
+			t = (Time.time - startTime) / time;
+			if (t > 1) {
+				t = 1;
+			}
+			float curveX = Mathf.Pow (1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Mathf.Pow (t, 2) * p2.x;
+			float curveY = Mathf.Pow (1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Mathf.Pow (t, 2) * p2.y;
 
-		transform.position = new Vector3 (curveX, curveY + height, 0);
-
-		if (t >= 1) { // We finished the jump, next node
-			jumpMaxTime = -1;
-			jumpStartTime = -1;
-			path.RemoveAt (0);
-			nextConnection = null;
+			transform.position = new Vector3 (curveX, curveY + height, 0);
+			yield return null;
 		}
+
+		PutOnGround ();
+		FinishedAction (true);
+		yield break;
 	}
 
 	IEnumerator FindPath(){
-		// Get the target platform to move to
-		RaycastHit2D hit = Physics2D.Raycast(target.transform.position + new Vector3(0,1,0), Vector2.down, Mathf.Infinity, layerMask);
-		if ( hit.collider == null) {
-			yield break; // No path to this location
-		}
-		PathablePlatform targetPlatform = hit.collider.gameObject.GetComponent<PathablePlatform>();
-		if (targetPlatform == null) {
-			Debug.Log ("No script");
-			yield break; // Can't path to a platform that isn't pathable
-		}
 
-		// Get the platform to start from
-		hit = Physics2D.Raycast(transform.position + new Vector3(0,1,0), Vector2.down, Mathf.Infinity, layerMask);
-		if ( hit.collider == null) {
-			yield break; // Not on a platform
+		if (currentPlatform == null) { // Not on a pathable platform
+			yield break;
 		}
-		PathablePlatform startPlatform = hit.collider.gameObject.GetComponent<PathablePlatform>();
-		if (startPlatform == null) {
-			yield break; // Not on pathable platform
+		if (targetPlatform == null) {
+			yield break;
 		}
 
 		platformsConsidered.Clear ();
 
-		PathablePlatform.PlatformConnection tmp = new PathablePlatform.PlatformConnection (PathablePlatform.ConnectionType.EDGE, startPlatform);
+		PathablePlatform.PlatformConnection tmp = new PathablePlatform.PlatformConnection (PathablePlatform.ConnectionType.EDGE, currentPlatform);
 		path = RecursivePathSearch (tmp, targetPlatform, Time.time);
-		if (path == null) {
-			Debug.LogWarning ("Could not find path");
-			yield break;
-		} else {
-			path.Remove (tmp);
+
+		if (path == null ) {
+			TeleportToTarget ();
 		}
-		for (int i = 0; i < path.Count - 1; i++) {
-			Debug.DrawLine (path [i].connectedPlatform.platformCollider.bounds.center, path [i + 1].connectedPlatform.platformCollider.bounds.center, Color.green, 3);
-		}
+
+		FinishedAction (true, true);
 	}
 
 	public List<PathablePlatform.PlatformConnection> RecursivePathSearch(PathablePlatform.PlatformConnection start, PathablePlatform targ, float startTime){
@@ -252,18 +284,16 @@ public class PathingAgent : MonoBehaviour {
 			return returnList;
 		}
 
-		// Get a new list and depth sort by distance to target
-		List<PathablePlatform.PlatformConnection> connections = start.connectedPlatform.connections.OrderBy (item => {
-			// if the platform is between player and the target, highest priority
-			Vector3 checkPos = item.connectedPlatform.platformCollider.bounds.center;
-			if(Mathf.Sign( checkPos.x - transform.position.x) == Mathf.Sign(targ.platformCollider.bounds.center.x - transform.position.x)){
-				// Both the target and this platform are on the same side of the agent, they must be in a line to it
-				return 1;
-			}else{
+		List<PathablePlatform.PlatformConnection> connections = start.connectedPlatform.connections.OrderBy ( item => {
+			// Put all platforms which are between me and the target of equal high priority
+			if( Mathf.Sign( targ.platformCollider.bounds.center.x - myCollider.bounds.center.x) == Mathf.Sign( item.connectedPlatform.platformCollider.bounds.center.x - myCollider.bounds.center.x) ){
 				return 0;
+			}else{
+				return 1;
 			}
 		}).ThenBy( item => {
-			return Vector3.Distance(targ.platformCollider.bounds.center, item.connectedPlatform.platformCollider.bounds.center);
+			// Choose the closest platform to self to find the path
+			return Vector3.Distance (item.connectedPlatform.platformCollider.bounds.center, myCollider.bounds.center);
 		}).ToList();
 
 		for (int i = 0; i < connections.Count; i++) {
