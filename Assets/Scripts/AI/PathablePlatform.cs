@@ -142,8 +142,8 @@ public class PathablePlatform : MonoBehaviour {
 			leftEdge = edgeCollider.points[0] + new Vector2(0.2f,0);
 			rightEdge = edgeCollider.points [edgeCollider.pointCount - 1]  - new Vector2(0.2f,0);
 		} else {
-			leftEdge = new Vector2 (-platformCollider.bounds.size.x + 0.2f, platformCollider.bounds.max.y - platformCollider.gameObject.transform.position.y) * 0.5f;
-			rightEdge = new Vector2 (platformCollider.bounds.size.x - 0.2f, platformCollider.bounds.max.y - platformCollider.gameObject.transform.position.y) * 0.5f;
+			leftEdge = new Vector2 (platformCollider.bounds.min.x - platformCollider.gameObject.transform.position.x + 0.2f, platformCollider.bounds.max.y - platformCollider.gameObject.transform.position.y + 0.1f);
+			rightEdge = new Vector2 (platformCollider.bounds.max.x - platformCollider.gameObject.transform.position.x - 0.2f, platformCollider.bounds.max.y - platformCollider.gameObject.transform.position.y + 0.1f);
 		}
 		oobBounds = platformCollider.bounds.extents * 2f;
 		if (oobBounds.y < 0.1f) {
