@@ -3,28 +3,53 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MovingPlatformScript : RaycastController {
-
-    public Vector3 move;
+    
     public LayerMask passengerMask;
 	float xOrigin, yOrigin;
 
+    public Vector3[] localWaypoints;
+
+    Vector3[] globalWaypoints;
+
+    public float speed;
+    int fromWaypointIndex;
+    float percentBetweenWaypoints;
 
     public override void Start() {
         base.Start();
-		xOrigin = transform.position.x;
-		yOrigin = transform.position.y;
+        globalWaypoints = new Vector3[localWaypoints.Length];
+        for (int i = 0; i < localWaypoints.Length; i++) {
+            globalWaypoints[i] = localWaypoints[i] + transform.position;
+        }
     }
+    
 
     void Update() {
         UpdateRaycastOrigins();
 
-        Vector3 velocity = move * Time.deltaTime;
-
+        Vector3 velocity = CalculatePlatformMovement();
         MovePassengers(velocity);
         transform.Translate(velocity);
-		checkReverse(velocity);
     }
 
+    Vector3 CalculatePlatformMovement() {
+        int toWaypointIndex = fromWaypointIndex + 1;
+        float distanceBetweenWaypoints = Vector3.Distance(globalWaypoints[fromWaypointIndex], globalWaypoints[toWaypointIndex]);
+        percentBetweenWaypoints += Time.deltaTime * speed / distanceBetweenWaypoints;
+
+        Vector3 newPos = Vector3.Lerp(globalWaypoints[fromWaypointIndex], globalWaypoints[toWaypointIndex], percentBetweenWaypoints);
+
+        if (percentBetweenWaypoints >= 1) {
+            percentBetweenWaypoints = 0;
+            fromWaypointIndex++;
+            if (fromWaypointIndex >= globalWaypoints.Length - 1) {
+                fromWaypointIndex = 0;
+                System.Array.Reverse(globalWaypoints);
+            }
+        }
+
+        return newPos - transform.position;
+    }
     void MovePassengers(Vector3 velocity) {
 
         HashSet<Transform> movedPassengers = new HashSet<Transform>();
@@ -108,30 +133,17 @@ public class MovingPlatformScript : RaycastController {
 
     }
 
-	void checkReverse(Vector3 velocity){
-
-		if (velocity.y != 0) {
-			float distanceLimitY = 4.0f;
-			if (transform.position.y > yOrigin + distanceLimitY) {
-				move = -move;
-			}
-			else if (transform.position.y < yOrigin - distanceLimitY) {
-				move = -move;
-			}
-		}
-
-		if (velocity.x != 0) {
-			float distanceLimitX = 4.0f;
-			if (transform.position.x > xOrigin + distanceLimitX) {
-				move = -move;
-			}
-			else if (transform.position.x < xOrigin - distanceLimitX) {
-				move = -move;
-			}
-		}
-
-	
-	}
-
+    void OnDrawGizmos() {
+        if (localWaypoints != null) {
+            Gizmos.color = Color.red;
+            float size = .3f;
+            
+            for(int i = 0; i < localWaypoints.Length; i++) {
+                Vector3 globalWaypointPosition = (Application.isPlaying)?globalWaypoints[i] : localWaypoints[i] + transform.position;
+                Gizmos.DrawLine(globalWaypointPosition - Vector3.up * size, globalWaypointPosition + Vector3.up * size);
+                Gizmos.DrawLine(globalWaypointPosition - Vector3.left * size, globalWaypointPosition + Vector3.left * size);
+            }
+        }
+    }
 				
 }
