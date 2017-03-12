@@ -55,7 +55,7 @@ public class PlatformerNavMesh : MonoBehaviour {
 		bbMin.x = SnapToGrid (bbMin.x);
 		bbMin.y = SnapToGrid (bbMin.y);
 
-		if (navMesh != null) {
+		/*if (navMesh != null) {
 			for (int x = 0; x < gridWidth; x++) {
 				for (int y = 0; y < gridHeight; y++) {
 					if ( GetCell (x, y) ) {
@@ -69,7 +69,7 @@ public class PlatformerNavMesh : MonoBehaviour {
 		} else {
 			Gizmos.color = new Color (0, 255, 255, 0.1f);
 			Gizmos.DrawCube ((bbMin + bbMax) / 2.0f, bbMax - bbMin);
-		}
+		}*/
 	}
 	#endif
 
