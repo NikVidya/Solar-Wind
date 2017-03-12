@@ -1,308 +1,365 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
 
 [RequireComponent(typeof(CapsuleCollider2D))]
-public class PathingAgent : MonoBehaviour {
-
-	[Header("Agent Movement Properties")]
-	[Tooltip("Max travel speed in units/second")]
-	public float maxSpeed = 5;
-	[Tooltip("Acceleration rate in units/second^2")]
-	public float acceleration = 4f;
-	[Tooltip("Maximum unit height of jump")]
-	public float jumpHeight = 3;
-	[Tooltip("Maximum time to spend chasing target")]
-	public float timeBeforeTeleport = 3;
-	[Tooltip("Distance range to stop at the target")]
-	public float endMaxDistance = 2;
+public class PathingAgent : MonoBehaviour
+{
+	[Header("Agent Abilities")]
+	[Tooltip("Distance the agent travels during a dash in units")]
+	public float dashDistance = 3.0f;
+	[Tooltip("Distance the agent can travel laterally while falling per unit in units")]
+	public float floatDistance = 0.5f;
+	[Tooltip("Height the agent can jump in units")]
+	public float jumpHeight = 3.0f;
 
 	[Header("Agent Pathfinding Properties")]
-	[Tooltip("Length of time to spend pathfinding (in milliseconds) (keep small to avoid framedrops)")]
-	public float maxPathingTime = 20f; // In milliseconds
-	[Tooltip("How much the target has to move before updating the path")]
-	public float targetTolerance = 0.2f;
-	[Tooltip("Minimum time between path updates in seconds")]
-	public float minPathAge = 0.5f;
+	[Tooltip("Delay (seconds) before the agent will start following a new path")]
+	public float pathingDelay = 1f;
+	[Tooltip("Seconds to chase the player before teleporting")]
+	public float secondsBeforeTeleport = 5;
+	[Tooltip("Seconds to spend finding a path to the player before giving up")]
+	public float maxPathfindingTime = 3;
+	[Tooltip("Seconds to spend per tick finding a path to the player")]
+	public float maxPerTickPathfindingTime = 0.01f;
+	[Tooltip("How far the target has to move before new path will be produced")]
+	public float targetDistanceTollerance = 0.5f;
+	[Tooltip("How many times in a row the agent can pick the DROP action before it will be suppressed")]
+	public int maxDropCount = 4;
+	[Tooltip("How many cells can the agent climb per move")]
+	public int maxClimbCount = 2;
 
+	[Header("Details")]
 	public Transform target;
 
-	private CapsuleCollider2D myCollider;
-	private PathablePlatform currentPlatform;
-	private List<PathablePlatform.PlatformConnection> path;
-	private List<PathablePlatform> platformsConsidered = new List<PathablePlatform>();
-	private int layerMask = 1 << 8;
-	private float height;
-	IEnumerator pathFindingCoroutine;
-	IEnumerator movementCoroutine;
-	PathablePlatform.PlatformConnection nextConnection = null;
+	PlatformerNavMesh navmesh;
+	CapsuleCollider2D myCollider;
 
-	float curSpeed;
+	Vector2 position {
+		get {
+			return myCollider.bounds.center;
+		}
+		set {
+			transform.position = value - ((Vector2)myCollider.bounds.center - (Vector2)transform.position);
+		}
+	}
 
-	void Start () {
+	public enum AgentAction {
+		MOVE_LEFT,
+		MOVE_RIGHT,
+		FLOAT_LEFT,
+		FLOAT_RIGHT,
+		DASH_LEFT,
+		DASH_RIGHT,
+		JUMP,
+		JUMP_CONTINUE,
+		DROP,
+		DROP_LEFT,
+		DROP_RIGHT,
+		LAND
+	}
+	// LUT for which actions can follow other actions (i.e. jump can't follow jump)
+	public Dictionary<AgentAction, List<AgentAction>> followUpActions = new Dictionary<AgentAction, List<AgentAction>>
+	{
+		{ AgentAction.MOVE_LEFT, 		new List<AgentAction>(){AgentAction.MOVE_LEFT, 	AgentAction.JUMP, 			AgentAction.DROP,		AgentAction.DROP_LEFT} },
+		{ AgentAction.MOVE_RIGHT, 		new List<AgentAction>(){AgentAction.MOVE_RIGHT, AgentAction.JUMP, 			AgentAction.DROP,		AgentAction.DROP_RIGHT} },
+		{ AgentAction.DROP_RIGHT, 		new List<AgentAction>(){AgentAction.DROP,		AgentAction.FLOAT_RIGHT, 	AgentAction.DASH_RIGHT,	AgentAction.LAND } 	},
+		{ AgentAction.DROP_LEFT, 		new List<AgentAction>(){AgentAction.DROP,		AgentAction.FLOAT_LEFT, 	AgentAction.DASH_LEFT,	AgentAction.LAND } 	},
+		{ AgentAction.FLOAT_LEFT, 		new List<AgentAction>(){AgentAction.DROP, 		AgentAction.LAND} 			},
+		{ AgentAction.FLOAT_RIGHT, 		new List<AgentAction>(){AgentAction.DROP, 		AgentAction.LAND} 			},
+		{ AgentAction.JUMP, 			new List<AgentAction>(){AgentAction.FLOAT_LEFT, AgentAction.FLOAT_RIGHT, 	AgentAction.DASH_LEFT, 	AgentAction.DASH_RIGHT, AgentAction.LAND, AgentAction.JUMP_CONTINUE} },
+		{ AgentAction.JUMP_CONTINUE, 	new List<AgentAction>(){AgentAction.FLOAT_LEFT, AgentAction.FLOAT_RIGHT, 	AgentAction.DASH_LEFT, 	AgentAction.DASH_RIGHT, AgentAction.LAND, AgentAction.JUMP_CONTINUE} },
+		{ AgentAction.DROP, 			new List<AgentAction>(){AgentAction.FLOAT_LEFT, AgentAction.FLOAT_RIGHT, 	AgentAction.DASH_LEFT, 	AgentAction.DASH_RIGHT, AgentAction.DROP, AgentAction.LAND} },
+		{ AgentAction.LAND, 			new List<AgentAction>(){AgentAction.MOVE_LEFT, 	AgentAction.MOVE_RIGHT, 	AgentAction.DROP, 		AgentAction.JUMP} },
+		{ AgentAction.DASH_LEFT, 		new List<AgentAction>(){AgentAction.DROP, 		AgentAction.LAND} 			},
+		{ AgentAction.DASH_RIGHT, 		new List<AgentAction>(){AgentAction.DROP, 		AgentAction.LAND} 			},
+	};
+	public class CellAction {
+		public PlatformerNavMesh.CellPosition start, end;
+		public AgentAction action;
+		public List<CellAction> nextActions;
+		public int nextActionIndex;
+	}
+	LinkedList<CellAction> path = new LinkedList<CellAction> (); // The path for the NPC to take
+	CellAction currentAction;
+
+	bool shouldGeneratePath = true;
+
+	/*
+	 * 
+	 * The path works using the producer-consumer model
+	 * The coroutine is the producer (maybe even make that another thread?)
+	 * The agent is the consumer
+	 * 
+	 * As soon as there is a valid reason to continue producing more path (i.e. the target moved), the producer will start to find a new path from wherever it left of.
+	 * It will perform a depth first search.
+	 * If there are no valid actions after the last action, remove the last action
+	 * On the next iteration, continue from the new tail
+	 * 
+	 * Meanwhile, the consumer (the agent) will be fufilling the actions. Possibly over several frames
+	 * Once the consumer starts an action, it can not be preempted.
+	 * As soon as the consumer starts an action, it will remove it from the path, and store it in a seperate variable
+	 * 
+	 * On the producer side, if it goes to find a path from the tail of the path and there are no entries in the path
+	 * Use the current action as the start point
+	 * If the current action is null, meaning the agent has completed whatever action they had just started, but had not started another action
+	 * then it's time to start a whole new path
+	 * 
+	 * There might be a problem with cycles
+	 * It's possible that the pathfinding might end up back on a path it has already considered. If this is the case, it will simply follow the same path exactly, over and over
+	 * However, I will allow this action, as the teleportation timeout will still allow the agent to reach it's destination, and break it out of the cycle
+	 * 
+	 * */
+
+	IEnumerator pathProducer;
+	void Start(){
+		navmesh = GameObject.FindObjectOfType<PlatformerNavMesh> ();
+		if (navmesh == null) {
+			Debug.LogWarning ("Pathing agent found no nav mesh. Can't find paths!");
+		}
+
 		myCollider = GetComponent<CapsuleCollider2D> ();
 		if (myCollider == null) {
-			Debug.LogError ("Pathing Agent needs a capsule collider 2d");
-			return;
+			Debug.LogError ("PathingAgent did not have a capsule collider 2D!");
 		}
-		height = myCollider.bounds.extents.y;
-		// Put the agent on the ground
-		PutOnGround();
+
+		if (pathProducer != null) {
+			StopCoroutine (pathProducer);
+		}
+		pathProducer = ProducePath ();
+		StartCoroutine (pathProducer);
 	}
 
-	bool isActioning = false;
-	bool onLastPlatform = false;
-	// Always move to the closest point on the current platform that makes the jump point within range
-	Vector3 jumpTarget;
-	Vector3 lastTargetPathPosition = new Vector3 ();
-	float lastPathTime = 0;
-	float chaseStartedTime;
-	bool pathHasChanged = false;
-	PathablePlatform targetPlatform;
-	void Update(){
-		// Get the platform the target is on
-		// Get the target platform to move to
-		RaycastHit2D hit = Physics2D.Raycast(target.transform.position + new Vector3(0,1,0), Vector2.down, Mathf.Infinity, layerMask);
-		if ( hit.collider != null) {
-			targetPlatform = hit.collider.gameObject.GetComponent<PathablePlatform>();
-		}
-		if (targetPlatform == currentPlatform && currentPlatform != null) {
-			onLastPlatform = true;
+	IEnumerator ProducePath(){
+		Debug.Log ("Starting up producer");
+		if (navmesh == null) {
+			yield break;
 		}
 
-		// Handle path update
-		if (Vector3.Distance (lastTargetPathPosition, target.position) > targetTolerance && (Time.time - lastPathTime) > minPathAge && !isActioning && !onLastPlatform ) {
-			lastPathTime = Time.time;
-			lastTargetPathPosition = target.position;
-			onLastPlatform = false;
-			chaseStartedTime = Time.time;
-			pathHasChanged = true;
+		int dropActionCount = 0; // How many times has the agent done DROP
+		int jumpActionCount = 0; // How many times has the agent done JUMP_CONTINUE
 
-			// Clear out the current path, it's invalid
-			if (path != null) {
-				path.Clear ();
-			}
-			nextConnection = null;
-
-			// Try and find the collider under me
-			hit = Physics2D.CapsuleCast(myCollider.bounds.center + new Vector3(0, 0.1f), myCollider.size, myCollider.direction, 0, Vector2.down, height*2.0f, layerMask);
-			if (hit.collider != null) {
-				currentPlatform = hit.collider.gameObject.GetComponent<PathablePlatform>();
-			}
-
-			// Stop trying to find a path to the last target
-			if (pathFindingCoroutine != null) {
-				StopCoroutine (pathFindingCoroutine);
-			}
-			// Start finding a new path
-			pathFindingCoroutine = FindPath ();
-			StartCoroutine (pathFindingCoroutine);
-		}
-
-		// Handle agent movement
-		// Move whenever there is a path
-		if ( !isActioning && nextConnection != null && currentPlatform != null || onLastPlatform) {
-			isActioning = true;
-			// We are done with whatever movement was being done, so stop the coroutine and start the next one
-			if (movementCoroutine != null) {
-				StopCoroutine (movementCoroutine);
-			}
-
-			// Determine if we are about to jump
-			Vector3 edge = currentPlatform.leftEdge;
-			if (!onLastPlatform) {
-				jumpTarget = nextConnection.connectedPlatform.rightEdge;
-				if (nextConnection.connectedPlatform.platformCollider.bounds.center.x > transform.position.x) {
-					edge = currentPlatform.rightEdge;
-					jumpTarget = nextConnection.connectedPlatform.leftEdge;
-				}
-			} else {
-				jumpTarget = target.position;
-				if (target.position.x > transform.position.x) {
-					edge = currentPlatform.rightEdge;
-				}
-			}
-			if ( (Mathf.Abs (jumpTarget.x - transform.position.x) < currentPlatform.agentJumpDistance || Mathf.Abs (edge.x - transform.position.x) < 0.1f) && !onLastPlatform) 
-			{ // Close enough to make the jump
-				float jumpTime = Mathf.Max (1, Vector3.Distance (transform.position, jumpTarget) / maxSpeed);
-				movementCoroutine = JumpFromTo (transform.position, jumpTarget, jumpTime);
-			} 
-			else if (!onLastPlatform) 
-			{ // Not close enough to make the jump
-				movementCoroutine = MoveTowards (jumpTarget, edge, true);
-			} 
-			else 
-			{
-				movementCoroutine = MoveTowards (target.position, edge, false);
-			}
-			StartCoroutine (movementCoroutine);
-		}
-
-		if (Time.time - chaseStartedTime > timeBeforeTeleport && pathHasChanged) {
-			if (movementCoroutine != null) {
-				StopCoroutine (movementCoroutine);
-			}
-			TeleportToTarget ();
-		}
-	}
-
-	void TeleportToTarget(){
-		pathHasChanged = false;
-		path = null;
-		nextConnection = null;
-		FinishedAction ( false );
-		ParticleSystem teleportSystem = GetComponentInChildren<ParticleSystem> ();
-		if (teleportSystem != null) {
-			teleportSystem.Play();
-		}
-		float randomLanding = Random.Range (-endMaxDistance, endMaxDistance);
-		transform.position = target.position;
-		PutOnGround ();
-	}
-
-	void FinishedAction( bool shouldPop, bool teleportOnNoPath = false ){
-		isActioning = false;
-		onLastPlatform = false;
-		if (shouldPop) {
-			if (path == null || path.Count <= 1) {
-				nextConnection = null;
-				return;
-			}
-			path.RemoveAt (0);
-			nextConnection = path [0];
-		}
-	}
-
-	void PutOnGround(){
-		// Capsule cast down from the actor location and place it where it lands
-		RaycastHit2D hit = Physics2D.CapsuleCast(myCollider.bounds.center + new Vector3(0, 0.1f), myCollider.size, myCollider.direction, 0, Vector2.down, height*2.0f, layerMask);
-		if (hit.collider != null) {
-			currentPlatform = hit.collider.gameObject.GetComponent<PathablePlatform>();
-			transform.position = new Vector2 (transform.position.x, hit.point.y + height);
-		} else {
-			Debug.Log ("unable to place on ground");
-			currentPlatform = null;
-		}
-	}
-
-	IEnumerator MoveTowards(Vector3 target, Vector3 edge, bool jumpTo ){
-		float endDistance = Random.Range (0, endMaxDistance);
-		if (currentPlatform == null) {
-			transform.position = edge;
-		} else {
-			while ( 
-					(Mathf.Abs (target.x - transform.position.x) > currentPlatform.agentJumpDistance && Mathf.Abs (edge.x - transform.position.x) > 0.1f && jumpTo)
-				||	(Mathf.Abs (target.x - transform.position.x) > endDistance && Mathf.Abs (edge.x - transform.position.x) > 0.1f && !jumpTo)
-			) {
-				
-				curSpeed += acceleration * Time.deltaTime * Mathf.Sign (target.x - transform.position.x) * Random.Range (0.3f, 1.2f);
-				curSpeed = Mathf.Min (Mathf.Max (-maxSpeed, curSpeed), maxSpeed); // Clamp speed
-
-				Vector2 nextPos = new Vector2 (transform.position.x + (curSpeed * Random.Range (0.6f, 1.2f) * Time.deltaTime), transform.position.y);
-
-				transform.position = nextPos;
-				PutOnGround ();
-
+		float lastYieldTime = Time.realtimeSinceStartup;
+		float time = Time.time;
+		List<AgentAction> blockedActions = new List<AgentAction> ();
+		while (shouldGeneratePath) {
+			/*if (Time.time - time < 0.2f) {
 				yield return null;
+				continue;
+			}*/
+			time = Time.time;
+			//Debug.LogFormat ("Loop: {0}, {1}, {2}, {3}", Time.realtimeSinceStartup, lastYieldTime, Time.realtimeSinceStartup - lastYieldTime, maxPerTickPathfindingTime);
+			if (Time.realtimeSinceStartup - lastYieldTime > maxPerTickPathfindingTime) {
+				//Debug.Log ("Yielding to main tick");
+				lastYieldTime = Time.realtimeSinceStartup;
+				yield return null; // Give the main tick a chance to run
+			}
+			// Check if the path needs generating
+			if (path.Count > 0 && Vector2.Distance (target.position, new Vector2 (path.Last.Value.end.x, path.Last.Value.end.y)) < targetDistanceTollerance) {
+				yield return null;
+				continue; // Don't need to produce more path
+			}
+
+			// Get the action we are continuing from
+			CellAction continueFrom = null;
+			if (path.Last != null) {
+				continueFrom = path.Last.Value;
+			}
+
+			if (continueFrom == null) {
+				continueFrom = currentAction;
+			}
+
+			if (continueFrom == null) {
+				Debug.Log ("Making up a node");
+				// Make one up. The actor just landed
+				continueFrom = new CellAction();
+				continueFrom.start = navmesh.WorldToCell (position);
+				continueFrom.end = navmesh.WorldToCell (position);
+				continueFrom.action = AgentAction.LAND;
+			}
+
+			if (   continueFrom.action != AgentAction.DROP
+				&& continueFrom.action != AgentAction.FLOAT_LEFT
+				&& continueFrom.action != AgentAction.FLOAT_RIGHT
+				&& continueFrom.action != AgentAction.DASH_LEFT
+				&& continueFrom.action != AgentAction.DASH_RIGHT
+			) { // Reset the drop count
+				dropActionCount = 0;
+			}
+			if (   continueFrom.action != AgentAction.JUMP_CONTINUE 
+				&& continueFrom.action != AgentAction.JUMP 
+				&& continueFrom.action != AgentAction.FLOAT_LEFT
+				&& continueFrom.action != AgentAction.FLOAT_RIGHT
+				&& continueFrom.action != AgentAction.DASH_LEFT
+				&& continueFrom.action != AgentAction.DASH_RIGHT
+			) { // Reset the jump count
+				jumpActionCount = 0;
+			}
+
+			// Build the list of next actions if it needs it
+			if (continueFrom.nextActions == null) {
+				continueFrom.nextActions = new List<CellAction> ();
+				List<AgentAction> nextAgentActions = followUpActions [continueFrom.action];
+				for (int i = 0; i < nextAgentActions.Count; i++) {
+					PlatformerNavMesh.CellPosition pos = GetActionEnd (continueFrom, nextAgentActions [i], dropActionCount, jumpActionCount);
+					if (pos != null && pos.x >= 0 && pos.x < navmesh.gridWidth && pos.y >= 0 && pos.y < navmesh.gridHeight) {
+						CellAction action = new CellAction ();
+						action.action = nextAgentActions [i];
+						action.start = continueFrom.end;
+						action.end = pos;
+						continueFrom.nextActions.Add (action);
+					}
+				}
+				// Sort the next actions list based on which gets us closest to the target
+				continueFrom.nextActions = continueFrom.nextActions.OrderBy (item => {
+					float dist = Vector2.Distance (target.position, navmesh.CellToWorld(item.end.x, item.end.y));
+					return dist;
+				}).ThenByDescending( item => {
+					return target.position.y - navmesh.CellToWorld(item.end.x, item.end.y).y;
+				}).ToList ();
+			}
+			/*for (int i = 0; i < continueFrom.nextActions.Count; i++) {
+				CellAction item = continueFrom.nextActions [i];
+				float dist = Vector2.Distance (navmesh.CellToWorld(item.end.x, item.end.y), target.position);
+				Debug.LogFormat ("Action: {0}, Distance: {1}", item.action, dist);
+			}*/
+
+			bool foundPath = false;
+			while (continueFrom.nextActionIndex < continueFrom.nextActions.Count) {
+				CellAction action = continueFrom.nextActions [continueFrom.nextActionIndex];
+				continueFrom.nextActionIndex++;
+
+				if (navmesh.GetCell (action.end.x, action.end.y)) {
+					path.AddLast (action);
+					if (action.action == AgentAction.DROP) {
+						dropActionCount++;
+					} else if (action.action == AgentAction.JUMP || action.action == AgentAction.JUMP_CONTINUE) {
+						jumpActionCount++;
+					}
+					//Debug.LogFormat ("Continuing with action: {0}. Dist: {1}", action.action, Vector2.Distance (target.position, new Vector2 (action.end.x, action.end.y)));
+					foundPath = true;
+					break;
+				}
+
+				if (Time.realtimeSinceStartup - lastYieldTime > maxPerTickPathfindingTime) {
+					//Debug.Log ("Yielding to main tick");
+					lastYieldTime = Time.realtimeSinceStartup;
+					yield return null; // Give the main tick a chance to run
+				}
+			}
+
+			if (!foundPath) {
+				Debug.DrawLine (navmesh.CellToWorld(continueFrom.start.x, continueFrom.start.y), navmesh.CellToWorld(continueFrom.end.x, continueFrom.end.y), Color.cyan, 1.0f);
+				Debug.LogFormat ("Reverting with action: {0}. Dist: {1}", continueFrom.action, Vector2.Distance (target.position, new Vector2 (continueFrom.end.x, continueFrom.end.y)));
+				path.RemoveLast ();
+			}else{
+				Debug.DrawLine (navmesh.CellToWorld(continueFrom.end.x, continueFrom.end.y), navmesh.CellToWorld(path.Last.Value.end.x, path.Last.Value.end.y), Color.red, 1.0f);
+			}
+
+			if (Time.realtimeSinceStartup - lastYieldTime > maxPerTickPathfindingTime) {
+				//Debug.Log ("Yielding to main tick");
+				lastYieldTime = Time.realtimeSinceStartup;
+				yield return null; // Give the main tick a chance to run
 			}
 		}
-		if (!jumpTo) {
-			curSpeed = 0;
-		}
-		FinishedAction (false);
-		yield break;
 	}
 
-	IEnumerator JumpFromTo(Vector2 p0, Vector2 p2, float time){
-		
-		if (time <= 0) {
-			Debug.LogWarning ("Attempted to make 0 second jump");
-			time = 0.1f;
-		}
+	public PlatformerNavMesh.CellPosition GetActionEnd( CellAction last, AgentAction check, int dropCount, int jumpCount ){
+		switch (check) {
+		case AgentAction.FLOAT_LEFT:
+			return new PlatformerNavMesh.CellPosition (last.end.x - ToCellDistance (floatDistance), last.end.y);
 
-		if ((p0.x > p2.x && curSpeed > 0) || (p0.x < p2.x && curSpeed < 0)) { // Jumping to the left, but speed to the right || jumping to the right, but speed to the left
-			curSpeed = 0; // Kill speed
-		}
-
-		float startTime = Time.time;
-		float jumpApex = p0.y + jumpHeight;
-		if (jumpApex < p2.y) {
-			jumpApex = p2.y + jumpHeight * 0.2f;
-		}
-		Vector2 p1 = new Vector2 (p0.x + ((p2.x - p0.x) * 0.5f), jumpApex); // Control point for the apex of the jump
-
-		float t = 0;
-		while (t < 1) {
-			t = (Time.time - startTime) / time;
-			if (t > 1) {
-				t = 1;
+		case AgentAction.MOVE_LEFT:
+			//Debug.Log ("Try move Left");
+			int landHeight = last.end.y + maxClimbCount;
+			bool hitGround = false;
+			while (last.end.y - landHeight < maxClimbCount * 2) { // Drop as long as we haven't dropped further than the max drop height
+				Debug.DrawLine(navmesh.CellToWorld(last.end.x - 1, landHeight), navmesh.CellToWorld(last.end.x - 1, landHeight - 1), Color.black, 0.5f);
+				if (!navmesh.GetCell (last.end.x - 1, landHeight - 1)) { // False is impassible
+					hitGround = true;
+					break;
+				}
+				landHeight--;
 			}
-			float curveX = Mathf.Pow (1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Mathf.Pow (t, 2) * p2.x;
-			float curveY = Mathf.Pow (1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Mathf.Pow (t, 2) * p2.y;
+			if (hitGround) {
+				return new PlatformerNavMesh.CellPosition (last.end.x - 1, landHeight);
+			} else {
+				return null;
+			}
 
-			transform.position = new Vector3 (curveX, curveY + height, 0);
-			yield return null;
-		}
+		case AgentAction.FLOAT_RIGHT:
+			return new PlatformerNavMesh.CellPosition (last.end.x + ToCellDistance (floatDistance), last.end.y);
 
-		PutOnGround ();
-		FinishedAction (true);
-		yield break;
-	}
+		case AgentAction.MOVE_RIGHT:
+			//Debug.Log ("Try move Right");
+			landHeight = last.end.y + maxClimbCount;
+			hitGround = false;
+			while (last.end.y - landHeight < maxClimbCount * 2) { // Drop as long as we haven't dropped further than the max drop height
+				Debug.DrawLine(navmesh.CellToWorld(last.end.x + 1, landHeight), navmesh.CellToWorld(last.end.x + 1, landHeight - 1), Color.black, 0.5f);
+				if (!navmesh.GetCell (last.end.x + 1, landHeight - 1)) { // False is impassible
+					hitGround = true;
+					break;
+				}
+				landHeight--;
+			}
+			if (hitGround) {
+				return new PlatformerNavMesh.CellPosition (last.end.x + 1, landHeight);
+			} else {
+				return null;
+			}
 
-	IEnumerator FindPath(){
+		case AgentAction.DROP_RIGHT:
+			//Check that the player can move left, and that there isn't a cell under that
+			if (!navmesh.GetCell (last.end.x + 1, last.end.y) || !navmesh.GetCell (last.end.x + 1, last.end.y - 1)) {
+				return null;
+			}
+			return new PlatformerNavMesh.CellPosition (last.end.x + 1, last.end.y);
 
-		if (currentPlatform == null) { // Not on a pathable platform
-			yield break;
-		}
-		if (targetPlatform == null) {
-			yield break;
-		}
+		case AgentAction.DROP_LEFT:
+			//Check that the player can move left, and that there isn't a cell under that
+			if (!navmesh.GetCell (last.end.x - 1, last.end.y) || !navmesh.GetCell (last.end.x - 1, last.end.y - 1)) {
+				return null;
+			}
+			return new PlatformerNavMesh.CellPosition (last.end.x - 1, last.end.y);
 
-		platformsConsidered.Clear ();
+		case AgentAction.DASH_LEFT:
+			//return new PlatformerNavMesh.CellPosition(last.end.x - ToCellDistance(dashDistance), last.end.y);
+			return null;
 
-		PathablePlatform.PlatformConnection tmp = new PathablePlatform.PlatformConnection (PathablePlatform.ConnectionType.EDGE, currentPlatform);
-		path = RecursivePathSearch (tmp, targetPlatform, Time.time);
+		case AgentAction.DASH_RIGHT:
+			//return new PlatformerNavMesh.CellPosition(last.end.x + ToCellDistance(dashDistance), last.end.y);
+			return null;
 
-		if (path == null ) {
-			TeleportToTarget ();
-		}
+		case AgentAction.JUMP_CONTINUE:
+		case AgentAction.JUMP:
+			if (jumpCount > jumpHeight) { // Can't jump higher than this
+				return null;
+			}
+			return new PlatformerNavMesh.CellPosition(last.end.x, last.end.y + 1);
 
-		FinishedAction (true, true);
-	}
+		case AgentAction.DROP:
+			// TODO: There are no floors which can be dropped through, but when there are, handle that case
+			if (dropCount > maxDropCount || !navmesh.GetCell(last.end.x, last.end.y - 2) ) { // Can't drop further than this, or there is floor below where we'll drop to
+				return null;
+			}
+			return new PlatformerNavMesh.CellPosition(last.end.x, last.end.y - 1);
 
-	public List<PathablePlatform.PlatformConnection> RecursivePathSearch(PathablePlatform.PlatformConnection start, PathablePlatform targ, float startTime){
-		if (platformsConsidered.Exists (x => x == start.connectedPlatform) || Time.time - startTime > maxPathingTime / 1000) { // Check if this platform has already been explored, or if we've timed out
+		case AgentAction.LAND:
+			//Debug.Log ("Try To land");
+			if ( navmesh.GetCell(last.end.x, last.end.y - 2) ) { // there is no floor below where we'll land
+				return null;
+			}
+			return new PlatformerNavMesh.CellPosition(last.end.x, last.end.y - 1);
+
+		default:
 			return null;
 		}
-		platformsConsidered.Add (start.connectedPlatform);
+	}
 
-		List<PathablePlatform.PlatformConnection> returnList = new List<PathablePlatform.PlatformConnection> ();
-		returnList.Add (start);
-
-		if (start.connectedPlatform == targ) { // Check if this platform is the target
-			return returnList;
-		}
-
-		List<PathablePlatform.PlatformConnection> connections = start.connectedPlatform.connections.OrderBy ( item => {
-			// Put all platforms which are between me and the target of equal high priority
-			if( Mathf.Sign( targ.platformCollider.bounds.center.x - myCollider.bounds.center.x) == Mathf.Sign( item.connectedPlatform.platformCollider.bounds.center.x - myCollider.bounds.center.x) ){
-				return 0;
-			}else{
-				return 1;
-			}
-		}).ThenBy( item => {
-			// Choose the closest platform to self to find the path
-			return Vector3.Distance (item.connectedPlatform.platformCollider.bounds.center, myCollider.bounds.center);
-		}).ToList();
-
-		for (int i = 0; i < connections.Count; i++) {
-			List<PathablePlatform.PlatformConnection> subPath = RecursivePathSearch (connections [i], targ, startTime); // Find the target in the children
-			if (subPath != null) {
-				subPath.Insert (0, start);
-				return subPath;
-			}
-		}
-		return null;
+	public int ToCellDistance( float unitDistance ){
+		return Mathf.RoundToInt(unitDistance / navmesh.gridSize);
 	}
 }
+
