@@ -115,7 +115,6 @@ public class PlayerEntity : Entity {
             step = speed * Time.deltaTime;
             respawnTarget = target;
             isRespawning = true;
-            Debug.Log("started death coroutine");
             StartCoroutine(Respawn(target));
         }
     }
