@@ -105,6 +105,7 @@
     <Compile Include="Assets\Scripts\SceneOnEnter.cs" />
     <Compile Include="Assets\Scripts\SceneTriggerScript.cs" />
     <Compile Include="Assets\Scripts\s_boundary.cs" />
+    <Compile Include="Assets\TeslaDeactivateScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Narrative\Dialog\Act 0-1\intro_dialog.txt" />
@@ -119,6 +120,12 @@
     <None Include="Assets\Narrative\Dialog\Level1_Dialog\Level1-1_level_end_scene_s3_escape.txt" />
     <None Include="Assets\Narrative\Dialog\Level2_Dialog\Leve2_Meeting_Captain.txt" />
     <None Include="Assets\Narrative\Dialog\Level2_Dialog\Level2_Meeting_Engineer.txt" />
+    <None Include="Assets\Narrative\Dialog\Level2_Dialog\Level2_Meeting_Engineer_Intro.txt" />
+    <None Include="Assets\Narrative\Dialog\Level2_Dialog\Level2_Meeting_Engineer_question.txt" />
+    <None Include="Assets\Narrative\Dialog\Level2_Dialog\Level2_Meeting_Engineer_raisebridge.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3_Meet_Scientist_Intro.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3_Scientist_Mistakes.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3_Scientist_ShutDown.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s1.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s2.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s3.txt" />

@@ -14,6 +14,9 @@ public class BridgeRaiseScript : MonoBehaviour {
     public void Activate() {
         activated = true;
     }
+    public void removeScene(GameObject sceneTriggerToRemove) {
+        Destroy(sceneTriggerToRemove);
+    }
 	void Update () {
         if (activated) {
             RaisingBridge.position = Vector3.MoveTowards(RaisingBridge.position, new Vector3(25, 13), step);

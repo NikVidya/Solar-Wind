@@ -1,0 +1,7 @@
+
+speakLine(0, "What were your mistakes?");
+speakLine(1, "We did... experiments...");
+speakLine(1, "Scientists are always looking for the limits...");
+speakLine(1, "... And we found them. The limits of what humans should know...");
+speakLine(1, "All of this is just a logical consequence - the universe catching up with itself.");
+speakLine(1, "I can only hope that there is no hell waiting for us...");

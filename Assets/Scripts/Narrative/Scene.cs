@@ -10,6 +10,7 @@ public class Scene : MonoBehaviour {
 	[Space(5)]
 	public bool takeCameraControl = true;
 	public bool takePlayerControl = true;
+    public PlayerEntity playerToTakeControlFrom;
 	public bool isReplayable = false;
 	public int speechTime = 400;
 	[Space(10)]
@@ -58,9 +59,12 @@ public class Scene : MonoBehaviour {
 				returnCam = Camera.main; // Store the camera the scene should return to
 				Camera.main.gameObject.SetActive(false); // Disable the main camera
 				sceneCam.gameObject.SetActive(true); // Enable our camera
-			}
-			// Play the starting sequence
-			startingSequence.Play ();
+            }
+            if (takePlayerControl) {
+                playerToTakeControlFrom.cantMove = true; // take control from player
+            }
+            // Play the starting sequence
+            startingSequence.Play ();
 		} else { // This scene has no sequences!
 			Debug.LogWarning("Scene was started but had no sequences");
 			return;
@@ -73,7 +77,10 @@ public class Scene : MonoBehaviour {
 		if (takeCameraControl) {
 			Debug.Log ("Returning control of the camera");
 			returnCam.gameObject.SetActive(true); // Disable the main camera
-			sceneCam.gameObject.SetActive(false); // Enable our camera
-		}
-	}
+			sceneCam.gameObject.SetActive(false); // Enable our cameras
+        }
+        if (takePlayerControl) {
+            playerToTakeControlFrom.cantMove = false; // return player control
+        }
+    }
 }

@@ -1,0 +1,13 @@
+
+moveToSpike(0,0, 300);
+moveToSpike(1,1, 300);
+
+speakLine(1, "Wh-Who's there?! STAY AWAY!!!");
+moveToSpike(1,2, 300);
+speakLine(0, "Woah there, you need to calm down!");
+speakLine(1, "... You're not here to... take revenge?");
+speakLine(0, "Revenge? What are you talking about?");
+speakLine(0, "I'm trying to shut down the self-destruct sequence");
+speakLine(1, "... Shut... down...? I can shut down... The teslas...");
+speakLine(1, "... Yes, a final act to make up for my mistakes...");
+speakLine(1, "... If you would only ask...");

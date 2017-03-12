@@ -1,0 +1,7 @@
+
+speakLine(1, "Then it's settled, give me a sec, okay?");
+moveToSpike(1, 2, 300);
+delay(300);
+moveToSpike(1, 1, 300);
+speakLine(1, "That should do it, go on ahead. Good luck, and come back soon!");
+speakLine(1, "I hope I make it through this...");
