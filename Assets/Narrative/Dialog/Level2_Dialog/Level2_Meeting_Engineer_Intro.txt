@@ -10,5 +10,10 @@
 
 moveToSpike(0, 0, 20);
 moveToSpike(1, 1, 20);
-speakLine(1, "Up ahead is the science section. ");
+speakLine(0, "Hey, do you know how to get out of this place?");
+speakLine(1, "You have the honor of addressing the chief engineer of this tugboat.");
+speakLine(0, "Neat.");
+speakLine(1, "You can get out of here through the science wing or the crew's quarters.");
+speakLine(1, "Up ahead is the science wing, I'd say that's your best bet.");
+speakLine(0, "Uh huh... So how do I get across?");
 speakLine(1, "You have to cross over the pistons to get there.");

@@ -36,8 +36,10 @@ camZoom( float orthographic_scale, int zoom_time )
 moveToSpike(0, 0, 20);
 moveToSpike(1, 1, 20);
 speakLine(1, "We're all going to die...");
-speakLine(0, "Not unless we stop the self destruct sequence.");
-speakLine(1, "We're all going to die...");
-speakLine(0, "Calm down there bud, we still have hope.");
-speakLine(1, "We're all going to die...");
-speakLine(0, "Um, okay? Just follow along then, you may be of some use.");
+speakLine(0, "Not if we stop the self destruct sequence.");
+speakLine(1, "That is not dead which can eternal lie...");
+speakLine(0, "What are you on about?");
+speakLine(0, "Didn't know the Solar Wind was assigned a poet...");
+speakLine(1, "... how could I be so blind?...");
+speakLine(0, "You sound incredibly useful.");
+speakLine(0, "Just follow along and try not to hit your head... more...");

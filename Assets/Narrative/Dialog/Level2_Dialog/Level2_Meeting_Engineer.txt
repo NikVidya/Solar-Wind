@@ -10,5 +10,5 @@
 
 speakLine(1, "Listen, I can activate the servos for the walkway");
 speakLine(1, "It would give you an easy alternative to jumping on all those pistons.");
-speakLine(1, "I would have to stay here though...");
+speakLine(1, "I would have to stay here to keep them from malfunctioning...");
 speakLine(1, "So I'll only do it if you promise to come back for me.");
