@@ -1,0 +1,5 @@
+speakLine(1, "... Glad you're willing to see reason.");
+speakLine(1, "I'll follow close by in cloak, so don't try anything.");
+speakLine(1, "I might just see my wife and kids again...");
+moveToSpike(1, 3, 300);
+delay(100);

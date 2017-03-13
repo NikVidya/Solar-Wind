@@ -1,0 +1,14 @@
+
+moveToSpike(0,0, 300);
+moveToSpike(1,1, 300);
+
+speakLine(1, "Hold it right there!");
+speakLine(0, "Damn... Cloaking device...");
+speakLine(1, "Where do you think you're going?");
+speakLine(0, "I'm headed to the bridge to save the ship");
+speakLine(1, "... I see... Well I'm coming with you, whether you like it or not.");
+speakLine(0, "Lucky me. How do we get out of here anyway?");
+speakLine(1, "Head down the shaft, then back up the other side.");
+speakLine(1, "The other route's through my quarters, and we're not going that way.");
+speakLine(0, "Why not?");
+speakLine(1, "We're just not, alright? Now enough with the questions or you'll be space debris.");
