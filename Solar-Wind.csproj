@@ -127,8 +127,15 @@
     <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3_Meet_Scientist_Intro.txt" />
     <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3_Scientist_Mistakes.txt" />
     <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3_Scientist_ShutDown.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3a_Computer1.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3a_Computer2.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3a_Computer3.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3a_Dialog\Level3a_InfoComputer.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3b_Dialog\Level3b_CrewmanComputer.txt" />
     <None Include="Assets\Narrative\Dialog\Level3b_Dialog\Level3b_Crewman_Attack.txt" />
     <None Include="Assets\Narrative\Dialog\Level3b_Dialog\Level3b_Crewman_Follow.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3b_Dialog\Level3b_InfoComputer.txt" />
+    <None Include="Assets\Narrative\Dialog\Level3b_Dialog\Level3b_LogComputer.txt" />
     <None Include="Assets\Narrative\Dialog\Level3b_Dialog\Level3b_Meet_Crewman_Intro.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s1.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s2.txt" />

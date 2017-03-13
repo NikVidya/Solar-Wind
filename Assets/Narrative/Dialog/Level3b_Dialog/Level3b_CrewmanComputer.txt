@@ -1,0 +1,9 @@
+moveToSpike(0,0, 300);
+
+speakLine(1, "Welcome, guest user");
+speakLine(0, "Logs.");
+speakLine(1, "Hey honey, it'll be a few days before you get this message...");
+speakLine(1, "But man, it feels good just knowing you'll hear this.");
+speakLine(1, "Things are going great on the Solar Wind...");
+speakLine(1, "...and I hope I'll see you again soon.");
+speakLine(1, "Love ya, and tell Sally that daddy's always thinking about her.");

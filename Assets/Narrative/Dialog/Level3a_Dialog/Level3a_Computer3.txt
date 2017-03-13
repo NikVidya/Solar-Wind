@@ -1,0 +1,11 @@
+moveToSpike(0,0, 300);
+
+speakLine(1, "Welcome, guest user");
+speakLine(0, "Logs.");
+speakLine(1, "Playing Head Xenologist Sutton log #3");
+speakLine(1, "... The masters have come...");
+speakLine(1, "They are older than time itself, we must serve them.");
+speakLine(1, "I lowered the shields in the cargo bay, as it was bidden...");
+speakLine(1, "A prayer to our new gods...");
+speakLine(1, "A'ngh'lce uwnn'phlea'ruhn enwph'glelsh nh ur");
+speakLine(1, "[Sound of a loud crash, then alarms]");

@@ -1,0 +1,12 @@
+moveToSpike(0,0, 300);
+
+speakLine(1, "Welcome, guest user");
+speakLine(0, "Logs.");
+speakLine(1, "Playing Head Xenologist Sutton log #1");
+speakLine(1, "The biology of the specimen is unlike anything we've seen before...");
+speakLine(1, "... Even among other extraterrestrial life forms we've found.");
+speakLine(1, "Specimen seems to react to electrical currents.");
+speakLine(1, "We've started a new line of research in light of this discovery.");
+speakLine(1, "And we have constructed several tesla coils for testing purposes");
+speakLine(1, "At this time the captain has enough to worry about...");
+speakLine(1, "... I won't bother informing him until a later date.");

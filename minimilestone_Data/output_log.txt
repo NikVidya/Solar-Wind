@@ -1,0 +1,139 @@
+Initialize engine version: 5.5.1f1 (88d00a7498cd)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce GTX 960 (ID=0x1401)
+    Vendor:   NVIDIA
+    VRAM:     2016 MB
+    Driver:   21.21.13.7653
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll (this message is harmless)
+Loading C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\UnityEngine.PlaymodeTestsRunner.dll into Unity Child Domain
+- Completed reload, in  0.027 seconds
+Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\Nick\Desktop\Docs\312\Solar-Wind\minimilestone_Data\Managed\System.dll (this message is harmless)
+desktop: 1920x1080 120Hz; virtual: 3840x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 1.094526 ms
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 5.058129 ms
+
+Unloading 13 unused Assets to reduce memory usage. Loaded Objects now: 378.
+Total: 0.232413 ms (FindLiveObjects: 0.029465 ms CreateObjectMapping: 0.027810 ms MarkObjects: 0.149313 ms  DeleteObjects: 0.012911 ms)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.322464 ms
+
+Unloading 28 unused Assets to reduce memory usage. Loaded Objects now: 1144.
+Total: 0.380733 ms (FindLiveObjects: 0.070849 ms CreateObjectMapping: 0.038735 ms MarkObjects: 0.213873 ms  DeleteObjects: 0.056613 ms)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.655855 ms
+
+Unloading 110 unused Assets to reduce memory usage. Loaded Objects now: 1802.
+Total: 0.420131 ms (FindLiveObjects: 0.067207 ms CreateObjectMapping: 0.023175 ms MarkObjects: 0.224467 ms  DeleteObjects: 0.104950 ms)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 7 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.811459 ms
+
+Unloading 58 unused Assets to reduce memory usage. Loaded Objects now: 1029.
+Total: 0.366497 ms (FindLiveObjects: 0.066545 ms CreateObjectMapping: 0.047012 ms MarkObjects: 0.194008 ms  DeleteObjects: 0.058268 ms)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Sequence attempted to call unknown direction: camToSpike
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.537993 ms
+
+Unloading 76 unused Assets to reduce memory usage. Loaded Objects now: 336.
+Total: 0.306242 ms (FindLiveObjects: 0.024830 ms CreateObjectMapping: 0.032445 ms MarkObjects: 0.179772 ms  DeleteObjects: 0.068863 ms)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.359213 ms
+
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 835.
+Total: 0.262871 ms (FindLiveObjects: 0.052971 ms CreateObjectMapping: 0.030127 ms MarkObjects: 0.172819 ms  DeleteObjects: 0.006290 ms)
+
+Taking control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Returning control of the camera
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.469792 ms
+
+Unloading 68 unused Assets to reduce memory usage. Loaded Objects now: 336.
+Total: 0.298958 ms (FindLiveObjects: 0.025823 ms CreateObjectMapping: 0.038404 ms MarkObjects: 0.167853 ms  DeleteObjects: 0.065883 ms)
+
+Setting up 1 worker threads for Enlighten.
+  Thread -> id: 17ac -> priority: 1 
