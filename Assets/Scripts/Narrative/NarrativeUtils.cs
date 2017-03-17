@@ -6,6 +6,9 @@ public class NarrativeUtils : MonoBehaviour {
 	private Canvas sceneCanvas;
 	private Camera sceneCamera;
 
+	private delegate void CancelCurrentAction();
+	CancelCurrentAction cancelActionHandler;
+
 	void Start(){
 		sceneCanvas = GetComponentInChildren<Canvas> (true);
 		if (sceneCanvas == null) {
@@ -18,6 +21,12 @@ public class NarrativeUtils : MonoBehaviour {
 		}
 	}
 
+	public void SkipCurrentAction(){
+		if (cancelActionHandler != null) {
+			cancelActionHandler ();
+			cancelActionHandler = null;
+		}
+	}
 
 	/**
 	 * SpeakLine
@@ -37,7 +46,13 @@ public class NarrativeUtils : MonoBehaviour {
 			sequence.Next ();
 			return;
 		}
+		// Initialize the cancel action
+		cancelActionHandler = () => {
+			bubbleScript.DismissBubble(); // Bail out sooner than usual.
+		};
+
 		// Initialize the speech bubble
+		bubbleScript.sceneCamera = sceneCamera;
 		bubbleScript.Initialize(actor, line, wordTime, ()=>{
 			sequence.Next();
 		});
@@ -52,7 +67,9 @@ public class NarrativeUtils : MonoBehaviour {
 			sequence.Next ();
 			return;
 		}
+		// Note: The player should not be able to skip an option dialog, so don't initialize a cancel here
 
+		bubbleScript.sceneCamera = sceneCamera;
 		bubbleScript.Initialize (actor, decisions, (Sequence.SequenceChoice choice) => {
 			sequence.MakeDecision(choice);
 		});
@@ -60,6 +77,17 @@ public class NarrativeUtils : MonoBehaviour {
 
 	IEnumerator moveCoroutine;
 	public void MoveTo(GameObject actor, Vector3 target, float time, Sequence sequence){
+		// Initialize the cancel action
+		cancelActionHandler = () => {
+			// If the coroutine hasn't completed yet
+			StopCoroutine(moveCoroutine);
+			Animator animator = actor.GetComponentInChildren<Animator> ();
+			if( animator != null ){
+				animator.SetFloat ("speed", 0);
+			}
+			sequence.Next();
+		};
+
 		if (time > 0) {
 			if (moveCoroutine != null) {
 				StopCoroutine (moveCoroutine);
@@ -92,6 +120,11 @@ public class NarrativeUtils : MonoBehaviour {
 
 	IEnumerator delayCoroutine;
 	public void Delay(float time, Sequence sequence){
+		// Initialize the cancel action
+		cancelActionHandler = () => {
+			StopCoroutine(delayCoroutine);
+			sequence.Next();
+		};
 		if (time <= 0) {
 			sequence.Next ();
 			return;

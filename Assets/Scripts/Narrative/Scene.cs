@@ -12,7 +12,6 @@ public class Scene : MonoBehaviour {
 	public bool takePlayerControl = true;
     public PlayerEntity playerToTakeControlFrom;
 	public bool isReplayable = false;
-	public int speechTime = 400;
 	[Space(10)]
 
 	[Header("Scene Data")]
@@ -37,6 +36,8 @@ public class Scene : MonoBehaviour {
 
 	private Camera returnCam;
 
+	private bool isPlaying = false;
+
 	void Start(){
 		sceneCam = GetComponentInChildren<Camera> (true);
 		if (sceneCam == null) {
@@ -51,11 +52,17 @@ public class Scene : MonoBehaviour {
 		}
 	}
 
+	void Update(){
+		if (Input.anyKeyDown && takePlayerControl && isPlaying) { // If the player pressed a button while being input trapped
+			GetComponent<NarrativeUtils>().SkipCurrentAction();
+		}
+	}
+
 	public void StartScene(){
 		if (startingSequence != null) {
+			isPlaying = true;
 			// Take control of the camera if we are supposed to
 			if (takeCameraControl) {
-				Debug.Log ("Taking control of the camera");
 				returnCam = Camera.main; // Store the camera the scene should return to
 				Camera.main.gameObject.SetActive(false); // Disable the main camera
 				sceneCam.gameObject.SetActive(true); // Enable our camera
@@ -82,5 +89,6 @@ public class Scene : MonoBehaviour {
         if (takePlayerControl) {
             playerToTakeControlFrom.cantMove = false; // return player control
         }
+		isPlaying = false;
     }
 }
