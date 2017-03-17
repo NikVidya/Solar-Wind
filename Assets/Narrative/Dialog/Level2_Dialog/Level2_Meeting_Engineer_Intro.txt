@@ -1,0 +1,19 @@
+/* 
+	Level 2 scene, Meet the Engineer
+	The prisoner has made his way to the center of the Engineering section
+	Here he meets an engineer who's too afraid to go on alone.
+	Taking him will take us to the crew's quarters.
+	Leaving him, we have to brave the pistons and moving parts above to 
+	cross over to the Science section
+	The engineer suggests an alternative though...
+*/
+
+moveToSpike(0, 0, 0);
+moveToSpike(1, 1, 20);
+speakLine(0, "Hey, do you know how to get out of this place?");
+speakLine(1, "You have the honor of addressing the chief engineer of this tugboat.");
+speakLine(0, "Neat.");
+speakLine(1, "You can get out of here through the science wing or the crew's quarters.");
+speakLine(1, "Up ahead is the science wing, I'd say that's your best bet.");
+speakLine(0, "Uh huh... So how do I get across?");
+speakLine(1, "You have to cross over the pistons to get there.");

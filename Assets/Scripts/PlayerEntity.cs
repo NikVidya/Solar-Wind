@@ -15,10 +15,11 @@ public class PlayerEntity : Entity {
 
     public bool isRespawning = false;
 
+    public bool cantMove = false;
+
     private float speed;
     private float step;
     public Transform respawnTarget;
-    
 
 	private Animator animator;
 
@@ -28,7 +29,10 @@ public class PlayerEntity : Entity {
 	}
 
     void Update() {
-        if (!isRespawning) {
+        if (cantMove) {
+            animator.SetFloat("speed", 0);
+        }
+        if (!isRespawning && !cantMove) {
             // stops gravity from changing when colliding vertically
             if (controller.collisions.above || controller.collisions.below || dashTimer >= 0) {
                 velocity.y = 0;
@@ -115,7 +119,6 @@ public class PlayerEntity : Entity {
             step = speed * Time.deltaTime;
             respawnTarget = target;
             isRespawning = true;
-            Debug.Log("started death coroutine");
             StartCoroutine(Respawn(target));
         }
     }

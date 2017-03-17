@@ -1,0 +1,9 @@
+moveToSpike(0,0, 300);
+
+speakLine(1, "Welcome, guest user");
+speakLine(0, "Logs.");
+speakLine(1, "... My head's spinning, didn't think anyone got seasick in space...");
+speakLine(1, "Can't... focus on my work... huh?!");
+speakLine(1, "... Thought I heard someone just now... only...");
+speakLine(1, "There were no words, just sounds...");
+speakLine(1, "I'm gonna head to sickbay...");

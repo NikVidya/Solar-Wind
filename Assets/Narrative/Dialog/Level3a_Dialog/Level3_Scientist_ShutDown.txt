@@ -1,0 +1,6 @@
+
+speakLine(1, "Thank you.");
+speakLine(1, "For giving me a chance at redemption.");
+delay(300);
+moveToSpike(1,3, 2000);
+camToSpike(3, 2000);

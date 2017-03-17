@@ -1,0 +1,8 @@
+
+speakLine(1, "Then it's settled, give me a sec, okay?");
+moveToSpike(1, 2, 300);
+speakLine(1, "Now to override the servo regulators and decouple the...");
+speakLine(1, "Wait, why am I explaining this to you? Never mind.");
+moveToSpike(1, 1, 300);
+speakLine(1, "That should do it, go on ahead. Good luck, and come back soon!");
+speakLine(1, "I hope I make it through this...");

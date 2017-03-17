@@ -1,0 +1,5 @@
+speakLine(1, "Below is the crew's quarters, shouldn't you know that?");
+speakLine(1, "No pistons to cross getting down there...");
+speakLine(1, "... but it might be a dangerous area, I heard blaster shots earlier.");
+speakLine(1, "You may want to go through Science instead...");
+speakLine(1, "... but even I can't say it would be 100% better.");

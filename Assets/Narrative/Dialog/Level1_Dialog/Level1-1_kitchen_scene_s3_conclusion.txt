@@ -1,0 +1,8 @@
+﻿/*
+
+Kitchen Scene - 3 conclusion
+
+The chef runs off towards the exit
+
+*/
+moveToSpike(1, 2, 2000);

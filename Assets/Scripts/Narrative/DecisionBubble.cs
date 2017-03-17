@@ -6,7 +6,9 @@ using UnityEngine.UI;
 
 public class DecisionBubble : DialogBubble {
 
+	public GameObject decisionContainer;
 	public GameObject decisionPrefab;
+	public Text nameText; // The UI element to indicate who is talking
 	private Sequence.SequenceChoice[] decisions;
 
 	// Delegate function for handling callback
@@ -25,14 +27,16 @@ public class DecisionBubble : DialogBubble {
 		this.decisions = decisions;
 		this.callback = callback;
 
+		nameText.text = actor.gameObject.name;
 		RefreshDecisions ();
 
 		base.Initialize (actor, -1);
 	}
 
 	private void RefreshDecisions(){
+		Debug.LogFormat ("Showing decisions from list with length: {0}", decisions.Length);
 		for (int i = 0; i < decisions.Length; i++) {
-			GameObject decision = Instantiate (decisionPrefab, transform);
+			GameObject decision = Instantiate (decisionPrefab, decisionContainer.transform);
 			decision.transform.localScale = new Vector3 (1, 1, 1);
 			Text text = decision.GetComponentInChildren<Text> ();
 			text.text = decisions [i].choiceText;

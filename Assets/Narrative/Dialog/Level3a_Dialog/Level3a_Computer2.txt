@@ -1,0 +1,12 @@
+moveToSpike(0,0, 300);
+
+speakLine(1, "Welcome, guest user");
+speakLine(0, "Logs.");
+speakLine(1, "Playing Head Xenologist Sutton log #2");
+speakLine(1, "Krueger called in sick earlier, unusual given the air filtration on this ship...");
+speakLine(1, "The specimen has shown some signs of activity, confirming our suspicions...");
+speakLine(1, "...that it was not dead, but in stasis.");
+speakLine(1, "Unease among the science team. I think a day off would benefit us all.");
+speakLine(1, "After all, we all need our 8 hours of schyil'ofnng sa'hragh'hlph.....");
+speakLine(1, "... what the hell was that?!... I don't know why I said that...");
+speakLine(1, "...");

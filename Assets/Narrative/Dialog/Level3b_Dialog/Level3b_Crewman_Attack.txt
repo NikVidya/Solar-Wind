@@ -1,0 +1,6 @@
+
+moveToSpike(0,2, 100);
+
+speakLine(1, "What the?!");
+speakLine(0, "Gotcha!");
+speakLine(1, "HURGH!!!");
