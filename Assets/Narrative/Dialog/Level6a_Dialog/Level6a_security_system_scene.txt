@@ -1,0 +1,17 @@
+﻿
+moveToSpike(0, 0, 0);
+delay(200);
+speakLine(0, "Welcome, guest user");
+speakLine(0, "The ship has experienced critical damage...");
+speakLine(0, "Damage to transfer terminal detected");
+speakLine(0, "Unable to activate terminal");
+speakLine(0, "Reviewing ship status...");
+speakLine(0, "Error in security system detected.");
+speakLine(0, "Core Engine Bay security protocols engaged.");
+delay(200);
+speakLine(0, "Attemtping to deactivate security protocols.");
+speakLine(0, "Error. Error.");
+speakLine(0, "Unable to deactivate security protocols.");
+speakLine(0, "Reviewing ship status...");
+speakLine(0, "To bypass security, please head to the transfer terminal located on the 3rd Floor.");
+speakLine(1, "...");
