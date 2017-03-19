@@ -1,3 +1,13 @@
-moveToSpike(0,0);
-speakLine(0, "Sick, a computer");
-speakLine(1, "yeah brah");
+moveToSpike(0,0, 100);
+speakLine(0, "Alright, now to shut this baby down...");
+speakLine(0, "... uhh, how am I supposed to do that again?");
+speakLine(1, "Guest user priveleges authorized, basic commands available.");
+speakLine(0, "No, damnit, I need admin privileges!");
+speakLine(1, "Access denied. SuperUser commands without Admin permission are very naughty.");
+speakLine(0, "... Can you at least help me get off this ship?");
+speakLine(1, "Self destruct imminent, escape pod bay unlocked, overrides in engine bay on standby.");
+speakLine(0, "So I can head to the engine bay to override the self destruct...");
+speakLine(0, "... or I can head back the way I came to the escape pods?");
+speakLine(1, "Correct, engine bay entrance is on east side of bridge area.");
+speakLine(1, "Escape pods can be accessed through west side.");
+speakLine(1, "Security systems have malfunctioned, use caution when heading back down.");
