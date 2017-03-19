@@ -109,6 +109,7 @@
     <Compile Include="Assets\TeslaDeactivateScript.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Fonts\Quantico\SIL Open Font License.txt" />
     <None Include="Assets\Narrative\Dialog\Act 0-1\intro_dialog.txt" />
     <None Include="Assets\Narrative\Dialog\Level0 Dialog\intro_scene.txt" />
     <None Include="Assets\Narrative\Dialog\Level1_Dialog\Level1-1_computer_scene.txt" />
@@ -142,6 +143,7 @@
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s3.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s4.txt" />
     <None Include="Assets\Narrative\Dialog\debug_scene_s1.txt" />
+    <None Include="Assets\Sound\references\Sonniss_license.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

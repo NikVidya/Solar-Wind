@@ -65,7 +65,7 @@ public class PlayerEntity : Entity {
                 }
             }
             // jump with space or W (can't jump unless on ground)
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W)) && controller.collisions.below) {
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && controller.collisions.below) {
                 velocity.y = jumpVelocity;
             }
             // if player is off the ground, direction control isn't as easy

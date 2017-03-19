@@ -1,0 +1,3 @@
+moveToSpike(0,0);
+speakLine(0, "Sick, a computer");
+speakLine(1, "yeah brah");
