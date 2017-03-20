@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class RoomSwitch : GenericCollider {
+public class RoomSwitch : MonoBehaviour {
 	public string roomName;
-    private bool hitOnce = false;
 
-    public override void OnHit() {
-        if (hitOnce == false) {
+    void OnTriggerEnter(Collider other) {
             SceneManager.LoadScene(roomName);
-            hitOnce = true;
-        }
     }
 }
