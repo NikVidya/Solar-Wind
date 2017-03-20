@@ -1,0 +1,4 @@
+﻿
+speakLine(1, "You sure?");
+speakLine(0, "Yeah, we're almost there, no point in leaving others behind now.");
+speakLine(1, "I see.");

@@ -1,0 +1,9 @@
+﻿speakLine(0, "We aren't heading towards the escape pods.");
+speakLine(0, "We're gonna take the transfer terminal to the Engine Bay.");
+speakLine(0, "Since we can turn off the self-destruct sequence.");
+speakLine(1, "Yeah, so why don't you come with.");
+speakLine(1, "It'll be easier to save the ship if we work together.");
+speakLine(2, "Hmm... Are you sure you can save the ship.");
+speakLine(1, "Yeah, I'm one of the engineers, so I know how to do it.");
+speakLine(3, "Hey, Boss why don't we trust them?");
+speakLine(2, "Hmm... Okay we'll come with you guys.");

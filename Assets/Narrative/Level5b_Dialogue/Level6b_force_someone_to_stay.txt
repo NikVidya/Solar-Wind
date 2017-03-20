@@ -1,0 +1,8 @@
+﻿
+speakLine(1, "... So you want me to stay back huh?");
+speakLine(1, "I guess thats to be expected.");
+speakLine(1, "Okay, I'll do it.");
+speakLine(1, "But, you better make it out alive.");
+delay(200)
+speakLine(1, "....");
+speakLine(1, "... I really wanted to keep on living.");

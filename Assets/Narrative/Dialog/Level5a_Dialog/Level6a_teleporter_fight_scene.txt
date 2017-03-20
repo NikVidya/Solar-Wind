@@ -1,0 +1,18 @@
+﻿
+moveToSpike(0, 0, 300);
+moveToSpike(1, 1, 300);
+moveToSpike(2, 2, 300);
+moveToSpike(3, 3, 300);
+speakLine(1, "Alright, we made it to the transfer terminal.");
+speakLine(1, "Give me a sec, I'll set the coordinates for the Engine Bay.");
+speakLine(0, "Wait, who are they?");
+speakLine(1, "Huh? Survivors maybe?");
+speakLine(2, "Hey hey hey, who the hell are you?");
+speakLine(2, "And what are you doing over here?");
+speakLine(3, "Hey Boss, they might also be heading for the Escape Pods.");
+speakLine(2, "Ho...");
+speakLine(1, "Um, no we plan-");
+speakLine(2, "We can't be having that now can we.");
+speakLine(2, "After all no telling if there'll be enough room.");
+speakLine(2, "Sorry, but we'll be having you disappear now.");
+speakLine(0, "Wait a sec, lets not be hasty here.");

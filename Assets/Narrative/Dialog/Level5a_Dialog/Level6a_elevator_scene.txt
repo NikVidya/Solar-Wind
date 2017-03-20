@@ -3,7 +3,7 @@ The elevator leading to the engine bay is completely blocked by rubble.
 The player decides to try to find another way down.
 */
 
-moveToSpike(0, 0, 0);
+moveToSpike(0, 0, 20);
 speakLine(0, "Well damn.");
 speakLine(0, "The elevator door is completely blocked off.");
 speakLine(0, "...");

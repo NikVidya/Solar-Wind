@@ -1,0 +1,9 @@
+﻿
+moveToSpike(0, 0, 0);
+moveToSpike(1, 1, 200);
+delay(200);
+speakLine(1, "Hmm, this terminal seems to be connected to a security blockade further down.")
+speakLine(1, "Judging by the map, go through the blockade will be faster, but...");
+speakLine(1, "It seems that the blockade removal has a security function attached to it.");
+speakLine(1, "So, unless someone stays behind to keep it open, it'll close automatically.")'
+speakLine(1, "What should we do?");

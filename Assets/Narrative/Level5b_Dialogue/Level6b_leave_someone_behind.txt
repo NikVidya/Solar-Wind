@@ -1,0 +1,15 @@
+﻿
+speakLine(0, "Huh? You want me to open the blockade?");
+speakLine(0, "WHY!? I just told you that to keep it open someone has to stay behind!");
+speakLine(1, "I heard you the first time.");
+speakLine(1, "I'm telling you to keep the gate open.");
+speakLine(1, "After all, while I want to help others, I can't save everyone.");
+speakLine(1, "The best I can do is help guide as many as possible to the escape pods as quickly as possible.");
+speakLine(1, "That's why, give me hand and open the gate.");
+speakLine(1, "If you stay behind, you will be saving a the lives of others.");
+speakLine(0, "What about me? Whose gonna save me...");
+speakLine(1, "I'm sorry, but not everyone can be saved.");
+speakLine(1, "Please, become the sacrifice to help save lives.");
+delay(200);
+speakLine(0, "...");
+speakLine(0, "...Goddamnit");

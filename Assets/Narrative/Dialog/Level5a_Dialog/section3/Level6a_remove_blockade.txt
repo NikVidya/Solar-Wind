@@ -1,0 +1,5 @@
+﻿
+speakLine(0, "Seems like I can open up the blockade further down the path using this terminal.");
+speakLine(0, "Lets see if I can do it");
+speakLine(0, "...");
+speakLine(0, "Done.");

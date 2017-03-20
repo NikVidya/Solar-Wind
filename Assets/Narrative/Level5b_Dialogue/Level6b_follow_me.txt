@@ -1,0 +1,5 @@
+﻿
+speakLine(1, "...");
+speakLine(1, "Alright.");
+speakLine(1, "Let find another path.");
+speakLine(1, "Follow me.");

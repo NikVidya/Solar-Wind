@@ -1,0 +1,3 @@
+﻿
+speakLine(0, "This terminal can open the bridge we just crossed");
+speakLine(0, "Someone will have to stay and keep it open though.");

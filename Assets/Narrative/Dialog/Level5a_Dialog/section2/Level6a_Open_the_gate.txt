@@ -1,0 +1,2 @@
+﻿
+speakLine(0, "Okay lets open the gate");
