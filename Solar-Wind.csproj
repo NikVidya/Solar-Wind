@@ -75,19 +75,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\BridgeRaiseScript.cs" />
-    <Compile Include="Assets\DoorUnlockScript.cs" />
-    <Compile Include="Assets\Scripts\AI\PathablePlatform.cs" />
-    <Compile Include="Assets\Scripts\AI\PathingAgent.cs" />
+    <Compile Include="Assets\Narrative\Dialog\EmptyClass.cs" />
+    <Compile Include="Assets\Scripts\AnimSoundPlayer.cs" />
+    <Compile Include="Assets\Scripts\BridgeRaiseScript.cs" />
     <Compile Include="Assets\Scripts\Constants.cs" />
     <Compile Include="Assets\Scripts\Controller.cs" />
     <Compile Include="Assets\Scripts\DeathCollider.cs" />
     <Compile Include="Assets\Scripts\DialogTrigger.cs" />
     <Compile Include="Assets\Scripts\DoorScript.cs" />
+    <Compile Include="Assets\Scripts\DoorUnlockScript.cs" />
     <Compile Include="Assets\Scripts\Entity.cs" />
     <Compile Include="Assets\Scripts\FollowMainCamera.cs" />
     <Compile Include="Assets\Scripts\GenericCollider.cs" />
     <Compile Include="Assets\Scripts\Level1\ComputerSceneTrigger.cs" />
+    <Compile Include="Assets\Scripts\Level4_Bridge_Activate.cs" />
     <Compile Include="Assets\Scripts\LevelSwitch.cs" />
     <Compile Include="Assets\Scripts\MovingPlatformScript.cs" />
     <Compile Include="Assets\Scripts\Narrative\DecisionBubble.cs" />
@@ -100,11 +101,14 @@
     <Compile Include="Assets\Scripts\Narrative\SpeechBubbleBehaviour.cs" />
     <Compile Include="Assets\Scripts\PlayerEntity.cs" />
     <Compile Include="Assets\Scripts\RaycastController.cs" />
+    <Compile Include="Assets\Scripts\RemoveBlocks.cs" />
     <Compile Include="Assets\Scripts\RespawnManager.cs" />
     <Compile Include="Assets\Scripts\RespawnPoint.cs" />
     <Compile Include="Assets\Scripts\RoomSwitch.cs" />
     <Compile Include="Assets\Scripts\SceneOnEnter.cs" />
     <Compile Include="Assets\Scripts\SceneTriggerScript.cs" />
+    <Compile Include="Assets\Scripts\TeleporterLocation.cs" />
+    <Compile Include="Assets\Scripts\WarpPoint.cs" />
     <Compile Include="Assets\Scripts\s_boundary.cs" />
     <Compile Include="Assets\TeslaDeactivateScript.cs" />
   </ItemGroup>
@@ -138,11 +142,33 @@
     <None Include="Assets\Narrative\Dialog\Level3b_Dialog\Level3b_InfoComputer.txt" />
     <None Include="Assets\Narrative\Dialog\Level3b_Dialog\Level3b_LogComputer.txt" />
     <None Include="Assets\Narrative\Dialog\Level3b_Dialog\Level3b_Meet_Crewman_Intro.txt" />
+    <None Include="Assets\Narrative\Dialog\Level4_Dialog\Level4_BridgeComputer.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\Level6a_ask_to_join.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\Level6a_elevator_scene.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\Level6a_security_system_scene.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\Level6a_teleporter_fight_scene.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\Level6a_try_to_explain.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section2\Level6a_Open_the_gate.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section2\Level6a_Unlock_the_gate.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section2\Level6a_leave_the_gate.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section3\Level6a_change_the_position.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section3\Level6a_keep_it closed.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section3\Level6a_leave_gate_be.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section3\Level6a_open_bridge.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section3\Level6a_remove_blockade.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section3\Level6a_remove_bridge_scene.txt" />
+    <None Include="Assets\Narrative\Dialog\Level5a_Dialog\section3\Level6a_shift_gate_scene.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s1.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s2.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s3.txt" />
     <None Include="Assets\Narrative\Dialog\debug\debug_scene_s4.txt" />
     <None Include="Assets\Narrative\Dialog\debug_scene_s1.txt" />
+    <None Include="Assets\Narrative\Level5b_Dialogue\Level6b_find_another_path.txt" />
+    <None Include="Assets\Narrative\Level5b_Dialogue\Level6b_follow_me.txt" />
+    <None Include="Assets\Narrative\Level5b_Dialogue\Level6b_force_someone_to_stay.txt" />
+    <None Include="Assets\Narrative\Level5b_Dialogue\Level6b_leave_someone_behind.txt" />
+    <None Include="Assets\Narrative\Level5b_Dialogue\Level6b_open_the_gate.txt" />
+    <None Include="Assets\Narrative\Level5b_Dialogue\Level6b_remove_the_blockade.txt" />
     <None Include="Assets\Sound\references\Sonniss_license.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
