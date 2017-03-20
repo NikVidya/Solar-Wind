@@ -1,0 +1,2 @@
+﻿
+speakLine(0, "Lets remove it.");

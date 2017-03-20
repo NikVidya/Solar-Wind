@@ -1,0 +1,15 @@
+﻿
+moveToSpike(0, 0, 0);
+moveToSpike(1, 1, 0);
+delay(200);
+speakLine(0, "Whose there!?");
+speakLine(1, "Calm down, im a survivor.");
+speakLine(1, "I'm trying to get to the escape pods");
+speakLine(0, "Oh.");
+speakLine(0, "If your going to the escape pods, you might want to turn around.");
+speakLine(0, "This is a dead end.");
+speakLine(0, "Well, normally it would be.");
+speakLine(0, "See that blockade over there?");
+speakLine(0, "You can get pass it using this terminal here.");
+speakLine(0, "However it'll only stay open as long as theres someone at the terminal");
+speakLine(0, "So we both might as well find another way down.");

@@ -1,0 +1,4 @@
+﻿
+moveToSpike(0, 0, 0);
+speakLine(0, "It seems like I can open this door using this terminal");
+speakLine(0, "I'll need to leave someone here though to keep it open.");

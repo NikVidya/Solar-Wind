@@ -1,0 +1,3 @@
+﻿
+speakLine(0, "Huh, looks like a can shift some gate around with this terminal");
+speakLine(0, "Someone has to stay behind though to control it though.");

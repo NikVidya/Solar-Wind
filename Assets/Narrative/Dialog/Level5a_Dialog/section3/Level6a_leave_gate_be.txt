@@ -1,0 +1,3 @@
+﻿
+speakLine(0, "Might be bad to do so");
+speakLine(0, "Lets keep thing as they are");
